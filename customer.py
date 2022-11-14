@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from environment import ShopEnvironment, Section
+from utils import breadth_first_search
 
 
 class Customer(ABC):
@@ -65,7 +66,9 @@ class Customer(ABC):
         Moves from section A to section B.
         """
         # call bfs from utils.py when bfs is adapted
+        road = breadth_first_search(self._shop_environment.map, a, b)
         self._current_section = self._shop_environment.map[b]
+        # return road
         
     def buy(self):
         """
