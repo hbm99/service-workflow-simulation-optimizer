@@ -74,7 +74,7 @@ class Customer(ABC):
         """
         Goes to cashier for payment and spends money.
         """
-        self.go(self._current_section.position, self._shop_environment.cashiers.position)
+        # self.go(self._current_section.position, self._shop_environment.cashiers[random or closer or empty].position)
         
         # spending_money = 0
         # for section in self._products_cart:
