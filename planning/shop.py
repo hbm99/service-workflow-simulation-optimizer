@@ -1,7 +1,8 @@
-
+from planning.planning import Action , PlanningProblem
+from planning.planning import ForwardPlan
+from planning.search import *
+from planning.planning import Action
 from enviroment import Section, ShopEnviroment
-from planning_utils.plan import *
-from planning_utils.search import *
 
 def shop_problem(client, enviroment):
 
@@ -43,5 +44,6 @@ def shop_problem(client, enviroment):
 e = ShopEnviroment(['vegetal', 'cerveza', 'fruta'], 8)
 pp = shop_problem(2, e)
 
-print(get_solution(shop_problem))
-
+variables ,problem = shop_problem(2,e)
+sol = breadth_first_tree_search(ForwardPlan(problem))
+print(sol)
