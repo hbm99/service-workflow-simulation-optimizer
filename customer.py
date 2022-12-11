@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
-from environment import ShopEnvironment, Section
+# from environment import ShopEnvironment, Section
 from walking_problem.walking_problem_utils import breadth_first_search
 
 
 class Customer(ABC):
     _arrival_time = 0
-    _shopping_list = {Section: int}
+    _shopping_list = {} # {Section: int}
     _shop_environment = None
     _position = None
     _products_cart = []
@@ -13,7 +13,7 @@ class Customer(ABC):
     _current_section = None
     
     @abstractmethod
-    def __init__(self, arrival_time : int, shopping_list : dict, shop_environment : ShopEnvironment, start_position : tuple, money : int = 10**10):
+    def __init__(self, arrival_time : int, shopping_list : dict, shop_environment, start_position : tuple, money : int = 10**10): # shop_environment : ShopEnvironment
         self._arrival_time = arrival_time
         self._shopping_list = shopping_list
         self._shop_environment = shop_environment
@@ -47,7 +47,7 @@ class Customer(ABC):
         """
         pass
     
-    def take(self, product_section : Section):
+    def take(self, product_section):# : Section):
         """
         Reduces shopping list by decrementing taken article.
         """

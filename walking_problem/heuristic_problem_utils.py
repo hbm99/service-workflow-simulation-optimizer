@@ -48,7 +48,7 @@ class PriorityQueue:
             self.add(item)
          
     def add(self, item):
-        """Add item to the queuez."""
+        """Add item to the queue."""
         pair = (self.key(item), item)
         heapq.heappush(self.items, pair)
 

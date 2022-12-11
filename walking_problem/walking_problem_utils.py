@@ -1,6 +1,6 @@
 import collections
-from environment import Section, Cashier
-from heuristic_problem_utils import Problem
+# from environment import Section, Cashier
+from walking_problem.heuristic_problem_utils import Problem
 from typing import List
 
 DIR_ROW = [0, 1, 0, -1, 1, -1, -1, 1]
@@ -28,7 +28,8 @@ def breadth_first_search(graph : list, root : tuple, destination : tuple, obstac
     return road_to_root(pi, destination, [])
 
 def is_obstacle(object):
-    return isinstance(object, Section) or isinstance(object, Cashier)
+    pass
+    # return isinstance(object, Section) or isinstance(object, Cashier)
 
 
 def road_to_root(pi: dict, node, road: list):
@@ -37,10 +38,13 @@ def road_to_root(pi: dict, node, road: list):
     road.append(pi[node])
     road_to_root(pi, pi[node], road)
 
+def is_inside(x, y):
+    pass
+
 class WalkingProblem(Problem):
-    """Problem about walking to buying items at a shop."""
+    """Shop's walking problem."""
     
-    def actions(self, state : List[int, int]):
+    def actions(self, state : List[int]):
         """The actions executable in this state."""
         x0, y0 = state
         return ([('Move', (x0, y0), (x0 + DIR_ROW[i], y0 + DIR_COL[i])) for i in range(len(DIR_ROW)) if is_inside(x0 + DIR_ROW[i], y0 + DIR_COL[i])])
@@ -50,9 +54,9 @@ class WalkingProblem(Problem):
         act, (x0, y0), (x1, y1) = action
         if act == 'Move':
             result = (x1, y1)
+            self.places.append(result)
         return result
 
     def is_goal(self, state):
         """True if person went through every shopping list item."""
-        # pending
-        pass
+        return self.goal in self.places
