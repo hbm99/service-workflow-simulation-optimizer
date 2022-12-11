@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from environment import ShopEnvironment, Section
-from utils import breadth_first_search
+from walking_problem.walking_problem_utils import breadth_first_search
 
 
 class Customer(ABC):
