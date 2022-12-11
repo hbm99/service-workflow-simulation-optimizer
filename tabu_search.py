@@ -1,32 +1,6 @@
-
-'''PSEUDOCODIGO
-     1 sBest ← s0
-     2 bestCandidate ← s0
-     3 tabuList ← []
-     4 tabuList.push(s0)
-     5 while (not stoppingCondition())
-     6 	sNeighborhood ← getNeighbors(bestCandidate)
-     7 	bestCandidate ← sNeighborHood.firstElement
-     8 	for (sCandidate in sNeighborHood)
-     9 		if ( (not tabuList.contains(sCandidate)) and (fitness(sCandidate) > fitness(bestCandidate)) )
-    10 			bestCandidate ← sCandidate
-    11 		end
-    12 	end
-    13 	if (fitness(bestCandidate) > fitness(sBest))
-    14 		sBest ← bestCandidate
-    15 	end
-    16 	tabuList.push(bestCandidate)
-    17 	if (tabuList.size > maxTabuSize)
-    18 		tabuList.removeFirst()
-    19 	end
-    20 end
-    21 return sBest
-    
-    '''
-
 class  Tabu_Search:
 
-    def __init__(self, initial_solution, max_iter, tabu_list_max_size=10) -> None:
+    def __init__(self, initial_solution, max_iter, tabu_list_max_size=6) -> None:
         self.initial_solution = initial_solution
         self.elite_candidate = [initial_solution]
         self.max_iter = max_iter
@@ -35,35 +9,208 @@ class  Tabu_Search:
     def execute(self):
         i=0
         best_sol= self.initial_solution
+        bs_fitness= self.fitness(best_sol)
         best_candidate= self.initial_solution
-        tabu_list=[]
+        tabu_list=[self.initial_solution]
         while (i < self.max_iter):
+            for s in self.elite_candidate:
+                
+                # Find neighbors of a solution
+                s_neighbors = self.find_neighbors(s) 
 
-            s_neighbors = self.find_neighbors(best_candidate) 
-            best_candidate= s_neighbors.first_element
-            for s_candidate in s_neighbors:
-                if not tabu_list.__contains__(s_candidate) and self.fitness(s_candidate> self.fitness(best_candidate)):
-                    best_candidate = s_candidate
+                # Saving candidates - fitness in a structure
+                s_neighbors_fitness=[]
 
-            if self.fitness(best_candidate) > self.fitness(best_sol):
-                 best_sol = best_candidate
-            tabu_list.append(best_candidate)
+                # Evaluating candidates
+                for s_candidate in s_neighbors:
+                    if not tabu_list.__contains__(s_candidate) :
+                        s_neighbors_fitness.append((s_candidate, self.fitness(s_candidate)))
 
-            if len(tabu_list) > self.tabu_list_max_len:
-                tabu_list.remove(tabu_list[0])
+                        #and self.fitness(s_candidate) > self.fitness(best_candidate):
 
-            #for item in self.elite_candidate:
+                s_neighbors_fitness.sort(key= lambda e : e[1])
+
+                # Updating best solution. Working with only one best solution 
+                best_candidate = s_neighbors_fitness[0][0]
+
+                if s_neighbors_fitness[0][1] > bs_fitness:
+                    best_sol = best_candidate
+                    bs_fitness= s_neighbors_fitness[0][1]
+
+                tabu_list.append(best_candidate)
+
+                if len(tabu_list) > self.tabu_list_max_len:
+                    tabu_list.remove(tabu_list[0])
+
+            self.elite_candidate = [best_sol]
+
                 
     def fitness(self):
         pass
 
     def find_neighbors(self):
+        '''To find the neighbor solutions from the current solution 𝕊, 
+        we need to define what is called a neighborhood function, 
+        under this function each solution 𝕊 has an associated subset of solutions.'''
         pass
 
 
 
 
 
+import pandas as pd
+import random as rd
+from itertools import combinations
+import math
 
+class TS():
+    def __init__(self, Path, seed, tabu_tenure,Penalization_weight):
+        self.Path = Path
+        self.seed = seed
+        self.tabu_tenure = tabu_tenure
+        self.Penalization_weight = Penalization_weight
+        self.instance_dict = self.input_data()
+        self.Initial_solution = self.get_InitialSolution()
+        self.tabu_str, self.Best_solution, self.Best_objvalue = self.TSearch()
+
+
+    def input_data(self):
+        '''Takes the path of the excel file of the SMTWTP instances.
+        Returns a dict of jobs number as Key and weight, processing time (hours) and due date (hours) as values.
+        '''
+        return pd.read_excel(self.Path, names=['Job', 'weight', "processing_time", "due_date"],
+                                 index_col=0).to_dict('index')
+
+    def get_tabuestructure(self):
+        '''Takes a dict (input data)
+        Returns a dict of tabu attributes(pair of jobs that are swapped) as keys and [tabu_time, MoveValue,
+        frequency count, penalized MoveValue]
+        '''
+        dict = {}
+        for swap in combinations(self.instance_dict.keys(), 2):
+            dict[swap] = {'tabu_time': 0, 'MoveValue': 0, 'freq': 0, 'Penalized_MV': 0}
+        return dict
+
+    def get_InitialSolution(self, show=False):
+        n_jobs = len(self.instance_dict) # Number of jobs
+        # Producing a random schedule of jobs
+        initial_solution = list(range(1, n_jobs+1))
+        rd.seed(self.seed)
+        rd.shuffle(initial_solution)
+        if show == True:
+            print("initial Random Solution: {}".format(initial_solution))
+        return initial_solution
+
+    def Objfun(self, solution, show = False):
+        '''Takes a set of scheduled jobs, dict (input data)
+        Return the objective function value of the solution
+        '''
+        dict = self.instance_dict
+        t = 0   #starting time
+        objfun_value = 0
+        for job in solution:
+            C_i = t + dict[job]["processing_time"]  # Completion time
+            d_i = dict[job]["due_date"]   # due date of the job
+            T_i = max(0, C_i - d_i)    #tardiness for the job
+            W_i = dict[job]["weight"]  # job's weight
+
+            objfun_value +=  W_i * T_i
+            t = C_i
+        if show == True:
+            print("\n","#"*8, "The Objective function value for {} solution schedule is: {}".format(solution ,objfun_value),"#"*8)
+        return objfun_value
+
+    def SwapMove(self, solution, i ,j):
+        '''Takes a list (solution)
+        returns a new neighbor solution with i, j swapped
+       '''
+        solution = solution.copy()
+        # job index in the solution:
+        i_index = solution.index(i)
+        j_index = solution.index(j)
+        #Swap
+        solution[i_index], solution[j_index] = solution[j_index], solution[i_index]
+        return solution
+
+    def TSearch(self):
+        '''The implementation Tabu search algorithm with long-term memory and pair_swap as Tabu attribute with
+        diversification.
+        '''
+        # Parameters:
+        tenure =self.tabu_tenure
+        tabu_structure = self.get_tabuestructure()  # Initialize the data structures
+        best_solution = self.Initial_solution
+        best_objvalue = self.Objfun(best_solution)
+        current_solution = self.Initial_solution
+        current_objvalue = self.Objfun(current_solution)
+
+        print("#"*30, "Short-term memory TS with Tabu Tenure: {}\nInitial Solution: {}, Initial Objvalue: {}".format(
+            tenure, current_solution, current_objvalue), "#"*30, sep='\n\n')
+        iter = 1
+        Terminate = 0
+        # for i in range(50):
+        while Terminate < 100:
+            print('\n\n### iter {}###  Current_Objvalue: {}, Best_Objvalue: {}'.format(iter, current_objvalue,
+                                                                                    best_objvalue))
+            # Searching the whole neighborhood of the current solution:
+            for move in tabu_structure:
+                candidate_solution = self.SwapMove(current_solution, move[0], move[1])
+                candidate_objvalue = self.Objfun(candidate_solution)
+                tabu_structure[move]['MoveValue'] = candidate_objvalue
+                # Penalized objValue by simply adding freq to Objvalue (minimization):
+                tabu_structure[move]['Penalized_MV'] = candidate_objvalue + (tabu_structure[move]['freq'] *
+                                                                             self.Penalization_weight)
+
+            # Admissible move
+            while True:
+                # select the move with the lowest Penalized ObjValue in the neighborhood (minimization)
+                best_move = min(tabu_structure, key =lambda x: tabu_structure[x]['Penalized_MV'])
+                MoveValue = tabu_structure[best_move]["MoveValue"]
+                tabu_time = tabu_structure[best_move]["tabu_time"]
+                # Penalized_MV = tabu_structure[best_move]["Penalized_MV"]
+                # Not Tabu
+                if tabu_time < iter:
+                    # make the move
+                    current_solution = self.SwapMove(current_solution, best_move[0], best_move[1])
+                    current_objvalue = self.Objfun(current_solution)
+                    # Best Improving move
+                    if MoveValue < best_objvalue:
+                        best_solution = current_solution
+                        best_objvalue = current_objvalue
+                        print("   best_move: {}, Objvalue: {} => Best Improving => Admissible".format(best_move,
+                                                                                                      current_objvalue))
+                        Terminate = 0
+                    else:
+                        print("   ##Termination: {}## best_move: {}, Objvalue: {} => Least non-improving => "
+                              "Admissible".format(Terminate,best_move,
+                                                                                                           current_objvalue))
+                        Terminate += 1
+                    # update tabu_time for the move and freq count
+                    tabu_structure[best_move]['tabu_time'] = iter + tenure
+                    tabu_structure[best_move]['freq'] += 1
+                    iter += 1
+                    break
+                # If tabu
+                else:
+                    # Aspiration
+                    if MoveValue < best_objvalue:
+                        # make the move
+                        current_solution = self.SwapMove(current_solution, best_move[0], best_move[1])
+                        current_objvalue = self.Objfun(current_solution)
+                        best_solution = current_solution
+                        best_objvalue = current_objvalue
+                        print("   best_move: {}, Objvalue: {} => Aspiration => Admissible".format(best_move,
+                                                                                                      current_objvalue))
+                        tabu_structure[best_move]['freq'] += 1
+                        Terminate = 0
+                        iter += 1
+                        break
+                    else:
+                        tabu_structure[best_move]['Penalized_MV'] = float('inf')
+                        print("   best_move: {}, Objvalue: {} => Tabu => Inadmissible".format(best_move,
+                                                                                              current_objvalue))
+                        continue
+        print('#'*50 , "Performed iterations: {}".format(iter), "Best found Solution: {} , Objvalue: {}".format(best_solution,best_objvalue), sep="\n")
+        return tabu_structure, best_solution, best_objvalue
 
 
