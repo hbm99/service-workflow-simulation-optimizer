@@ -48,7 +48,7 @@ def road_to_root(pi: dict, node, road: list):
     road_to_root(pi, pi[node], road)
 
 def is_inside(map, x, y):
-    is_inside = x > 0 and y > 0 and x < len(map) and y < len(map[0])
+    is_inside = x >= 0 and y >= 0 and x < len(map) and y < len(map[0])
     return is_inside
 
 class WalkingProblem(Problem):
