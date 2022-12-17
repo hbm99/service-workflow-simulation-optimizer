@@ -1,7 +1,6 @@
 import collections
 from environment import Section, Cashier, Cell
 from walking_problem.heuristic_problem_utils import Problem
-from typing import List
 
 DIR_ROW = [0, 1, 0, -1, 1, -1, -1, 1]
 DIR_COL = [1, 0, -1, 0, 1, 1, -1, -1]
@@ -56,13 +55,12 @@ class WalkingProblem(Problem):
     """Shop's walking problem."""
     
     def h(self, node):
-        result = distance_no_obstacles(self.shop_map, self.initial, self.goal[0])
+        result = distance_no_obstacles(self.shop_map, node.state, self.goal[0])
         return result # picking as goal the first item to buy from shopping list for heuristic, pending to change in next versions and set it with closer item to client 
     
-    def actions(self, state : List[int]):
+    def actions(self, state):
         """The actions executable in this state."""
         x0, y0 = state
-        self.places.append((x0, y0))
         actions = []
         for i in range(len(DIR_ROW)):
             new_X_place = x0 + DIR_ROW[i]
@@ -82,9 +80,22 @@ class WalkingProblem(Problem):
 
     def is_goal(self, state):
         """True if person went through every shopping list item."""
-        visited_goals : bool = True
-        for item in self.goal:
-            if item not in self.places:
-                visited_goals = False
+        
+        # self.places.append(state)
+        visited_goals : bool = state in self.goal
+        
+        # for item in self.goal:
+        #     if item not in self.places:
+        #         visited_goals = False
+        #         break
+        
+        # new_goal = self.goal
+        # for item in self.places:
+        #     if item in self.goal:
+        #         new_goal = []
+        #         for place in self.goal:
+        #             if item != place:
+        #                 new_goal.append(place)
+        # self.goal = new_goal
         
         return visited_goals

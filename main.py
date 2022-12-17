@@ -4,8 +4,12 @@ from environment import ShopEnviroment, Cell
 
 shop_environment = ShopEnviroment(8, ["A"], 1)
 
-p = WalkingProblem((0, 0), [(5, 1)], places = [], shop_map = shop_environment.map)
+start = (0, 0)
+for item_to_buy in [(5, 5), (2, 3)]:
+    p = WalkingProblem(start, [item_to_buy], shop_map = shop_environment.map)
 
-sol = astar_search(p)
-print(path_actions(sol))
-print(path_states(sol))
+    sol = astar_search(p)
+    print(path_actions(sol))
+    print(path_states(sol))
+    
+    start = item_to_buy
