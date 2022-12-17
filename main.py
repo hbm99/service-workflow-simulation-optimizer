@@ -4,7 +4,7 @@ from environment import ShopEnviroment, Cell
 
 shop_environment = ShopEnviroment(8, ["A"], 1)
 
-p = WalkingProblem((0, 0), [(0, 1), (1, 3)], places = [], shop_map = shop_environment.map)
+p = WalkingProblem((0, 0), [(5, 1)], places = [], shop_map = shop_environment.map)
 
 sol = astar_search(p)
 print(path_actions(sol))

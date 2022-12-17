@@ -12,8 +12,8 @@ class ShopEnviroment:
         # list of cashiers at the shop
         self.cashier = [ParallelServer() for i in range(server_count)]
         
-        self.map = [[None] * shop_size] * shop_size
-        self.fill_initial_map()
+        self.map = [["None"] * shop_size] * shop_size
+        # self.fill_initial_map()
         
     def fill_initial_map(self):
         for i in range(len(self.map)):
@@ -22,7 +22,8 @@ class ShopEnviroment:
 
 class Cell:
     def __init__(self, pos) -> None:
-        self.position = pos
+        # self.position = pos
+        pass
 
 class Section(Cell):
     def __init__(self, name):
