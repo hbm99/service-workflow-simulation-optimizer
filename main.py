@@ -1,8 +1,8 @@
 from walking_problem.heuristic_problem_utils import astar_search, path_actions, path_states
 from walking_problem.walking_problem_utils import WalkingProblem
-from environment import ShopEnviroment, Cell
+from environment import ShopEnvironment, Cell
 
-shop_environment = ShopEnviroment(8, ["A"], 1)
+shop_environment = ShopEnvironment(8, ["A"], 1)
 
 start = (0, 0)
 for item_to_buy in [(5, 5), (2, 3)]:

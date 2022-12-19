@@ -1,25 +1,27 @@
 from abc import ABC, abstractmethod
-# from environment import ShopEnvironment, Section
+from environment import ShopEnvironment, Section
 from walking_problem.walking_problem_utils import breadth_first_search
 
 
 class Customer(ABC):
     _arrival_time = 0
-    _shopping_list = {} # {Section: int}
+    _shopping_list = {Section: int}
     _shop_environment = None
     _position = None
     _products_cart = []
     _money = 0
     _current_section = None
+    _buying_time = 0
     
     @abstractmethod
-    def __init__(self, arrival_time : int, shopping_list : dict, shop_environment, start_position : tuple, money : int = 10**10): # shop_environment : ShopEnvironment
+    def __init__(self, arrival_time : int, shopping_list : dict, shop_environment : ShopEnvironment, start_position : tuple, money : int = 10**10, time : int = 10**10):
         self._arrival_time = arrival_time
         self._shopping_list = shopping_list
         self._shop_environment = shop_environment
         self._position = start_position
         self._products_cart = []
         self._money = money
+        self._buying_time = time
         
     
     def get_products_cart(self):
