@@ -14,7 +14,7 @@ class Customer(ABC):
     _buying_time = 0
     
     @abstractmethod
-    def __init__(self, arrival_time : int, shopping_list : dict, shop_environment : ShopEnvironment, start_position : tuple, money : int = 10**10, time : int = 10**10):
+    def __init__(self, arrival_time : int, shopping_list : dict, shop_environment : ShopEnvironment, start_position : tuple = (0, 0), money : int = 10**10, time : int = 10**10):
         self._arrival_time = arrival_time
         self._shopping_list = shopping_list
         self._shop_environment = shop_environment
@@ -83,3 +83,6 @@ class Customer(ABC):
         #     spending_money += section.price
         
         # self._money -= spending_money (next gen project)
+        
+class InAHurryCustomer(Customer):
+    pass
