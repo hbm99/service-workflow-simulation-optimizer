@@ -1,11 +1,12 @@
-from abc import ABC, abstractmethod
+#from abc import ABC, abstractmethod
+import random
 from environment import ShopEnvironment, Section
 from walking_problem.walking_problem_utils import breadth_first_search
 
 
-class Customer(ABC):
+class Customer: #(ABC)
     _arrival_time = 0
-    _shopping_list = {Section: int}
+    _shopping_list = {Section : int}
     _shop_environment = None
     _position = None
     _products_cart = []
@@ -13,7 +14,7 @@ class Customer(ABC):
     _current_section = None
     _buying_time = 0
     
-    @abstractmethod
+    #@abstractmethod
     def __init__(self, arrival_time : int, shopping_list : dict, shop_environment : ShopEnvironment, start_position : tuple = (0, 0), money : int = 10**10, time : int = 10**10):
         self._arrival_time = arrival_time
         self._shopping_list = shopping_list
@@ -22,6 +23,7 @@ class Customer(ABC):
         self._products_cart = []
         self._money = money
         self._buying_time = time
+        self.index = 0 ######
         
     
     def get_products_cart(self):
@@ -42,18 +44,18 @@ class Customer(ABC):
         """
         return self._shopping_list
     
-    @abstractmethod
+    #@abstractmethod
     def get_plan(self):
         """
         Returns actions for buying stuff from the shopping list.
         """
         pass
     
-    def take(self, product_section):# : Section):
+    def take(self, product : int, section : Section):# : Section):
         """
         Reduces shopping list by decrementing taken article.
         """
-        self._shopping_list.pop(product_section)
+        self._shopping_list.pop(product)
         
         # product_amount = self._shopping_list[product] # when clients buy specific products amount (next gen project)
         # if product_amount > 1:
@@ -68,9 +70,13 @@ class Customer(ABC):
         Moves from section A to section B.
         """
         # call bfs from utils.py when bfs is adapted
-        road = breadth_first_search(self._shop_environment.map, a, b)
-        self._current_section = self._shop_environment.map[b]
+        # road = breadth_first_search(self._shop_environment.map, a, b)
+        # self._current_section = self._shop_environment.map[b]
         # return road
+        self.index+=1
+        print('cliente')
+        print(self.index)
+        yield self._shop_environment.env.timeout(random.randint(1, 3))
         
     def buy(self):
         """

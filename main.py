@@ -1,6 +1,8 @@
 import random
 import simpy
 
+from simulation import run_shop
+
 
 
 def main():
@@ -9,7 +11,7 @@ def main():
     num_cashiers = 1
     products = ['pizza', 'pan']
     simulation_time = 500
-    shelves_distribution = [1, 2, 1]
+    shelves_distribution = [1, 0, 1]
     
     # Run the simulation
     env = simpy.Environment()
