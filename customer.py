@@ -56,7 +56,7 @@ class Customer(ABC):
         pass
 
     @abstractmethod
-    def take(self, product : int, section : Section):
+    def take(self, product : Product):
         """
         Reduces shopping list by decrementing taken article and add to product car.
         """
@@ -96,7 +96,7 @@ class InAHurryCustomer(Customer):
     def get_plan(self):
         # Insert your code here
         pass
-    def take(self, product: int, section: Section):
+    def take(self, product: Product):
         # Insert your code here
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         # Insert your code here
@@ -112,7 +112,7 @@ class ConsumeristCustomer(Customer):
     def get_plan(self):
         # Insert your code here
         pass
-    def take(self, product: int, section: Section):
+    def take(self, product: Product):
         # Insert your code here
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         # Insert your code here
@@ -128,7 +128,7 @@ class RegularCustomer(Customer):
     def get_plan(self):
         # Insert your code here
         pass
-    def take(self, product: int, section: Section):
+    def take(self, product: Product):
         # Insert your code here
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         # Insert your code here

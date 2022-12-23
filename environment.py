@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 import simpy
 
 
@@ -8,7 +8,7 @@ class Product:
         self.price = price
 
 class ShopEnvironment:
-    def __init__(self, env, shop_size, products : List[Product], shelves_distribution : List[int], num_cashiers : int = 1):
+    def __init__(self, env, shop_size, products : Dict[str, Product], shelves_distribution : List[int], num_cashiers : int = 1):
         self.env = env
         self.profit = 0
         self.cashier = simpy.Resource(env, num_cashiers)
@@ -16,7 +16,7 @@ class ShopEnvironment:
         
         self.sections = []
         for i in range(len(shelves_distribution)):
-            self.sections.append(Section(products[shelves_distribution[i]], i))
+            self.sections.append(Section(products[list(products.keys())[shelves_distribution[i]]], i))
         
         self.cashiers = []
         for i in range(num_cashiers):
