@@ -39,7 +39,7 @@ def go_shopping(env, customer, shop):
     
     arrival_time = env.now
     
-    planning = ["Go(0, 1)"]#customer.get_plan()
+    planning = ["Go(0, 1)"] # customer.get_plan() # ver cómo gestionar el tema de los tipos de clientes que su get_plan no devuelva los strings de planning
     
     for plan in planning:
         tokens = tokenize(plan)

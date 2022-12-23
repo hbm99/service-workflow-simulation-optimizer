@@ -1,10 +1,10 @@
-#from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod
 import random
-from environment import ShopEnvironment, Section
-from walking_problem.walking_problem_utils import breadth_first_search
+from typing import Dict
+from environment import Product, ShopEnvironment, Section
 
 
-class Customer: #(ABC)
+class Customer(ABC):
     _arrival_time = 0
     _shopping_list = {Section : int}
     _shop_environment = None
@@ -14,8 +14,9 @@ class Customer: #(ABC)
     _current_section = None
     _buying_time = 0
     
-    #@abstractmethod
-    def __init__(self, id, arrival_time : int, shopping_list : dict, shop_environment : ShopEnvironment, start_position : tuple = (0, 0), money : int = 10**10, time : int = 10**10):
+    @abstractmethod
+    def __init__(self, id : int, arrival_time : int, shopping_list : Dict[Product], shop_environment : ShopEnvironment, start_position : tuple = (0, 0), money : int = 10**10, time : int = 10**10):
+        self.id = id
         self._arrival_time = arrival_time
         self._shopping_list = shopping_list
         self._shop_environment = shop_environment
@@ -23,7 +24,6 @@ class Customer: #(ABC)
         self._products_cart = []
         self._money = money
         self._buying_time = time
-        self.id = id ######
         
     
     def get_products_cart(self):
@@ -44,52 +44,73 @@ class Customer: #(ABC)
         """
         return self._shopping_list
     
-    #@abstractmethod
+    @abstractmethod
     def get_plan(self):
         """
         Returns actions for buying stuff from the shopping list.
         """
         pass
-    
+
+    @abstractmethod
     def take(self, product : int, section : Section):
         """
-        Reduces shopping list by decrementing taken article.
+        Reduces shopping list by decrementing taken article and add to product car.
         """
-        self._shopping_list.pop(product)
-        
-        # product_amount = self._shopping_list[product] # when clients buy specific products amount (next gen project)
-        # if product_amount > 1:
-        #     product_amount-= 1
-        # else: 
-        #     self._shopping_list.pop(product)
-            
-        # self._shop_environment.sections[product_section].products_count-= 1 (next gen project)
-        
+        pass
+        #self._shopping_list.pop(product)
+    
+    @abstractmethod
     def go(self, a : tuple, b: tuple):
         """
         Moves from section A to section B.
         """
-        # call bfs from utils.py when bfs is adapted
-        # road = breadth_first_search(self._shop_environment.map, a, b)
-        # self._current_section = self._shop_environment.map[b]
-        # return road
-        print(self.id)
-        print("antes")
-        yield self._shop_environment.env.timeout(random.randint(10, 30))
-        print(self.id)
-        print("despues")
-        
+        pass
+    
     def buy(self):
         """
         Goes to cashier for payment and spends money.
         """
-        # self.go(self._current_section.position, self._shop_environment.cashiers[random or closer or empty].position)
+        self.go(self._current_section.position, self._shop_environment.cashiers[random.randint(0, len(self._shop_environment.cashiers) - 1)].position)
         
-        # spending_money = 0
-        # for section in self._products_cart:
-        #     spending_money += section.price
+        yield self._shop_environment.env.timeout(random.randint(len(self._products_cart) * 2, len(self._products_cart) * 5))
         
-        # self._money -= spending_money (next gen project)
+        self._shop_environment.profit+=sum([product.price for product in self._products_cart])
         
 class InAHurryCustomer(Customer):
-    pass
+    def __init__(self, id: int, arrival_time: int, shopping_list: Dict[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
+        super().__init__(id, arrival_time, shopping_list, shop_environment, start_position, money, time)
+    def get_plan(self):
+        # Insert your code here
+        pass
+    def take(self, product: int, section: Section):
+        # Insert your code here
+        pass
+    def go(self, a: tuple, b: tuple):
+        # Insert your code here
+        pass
+    
+class ConsumeristCustomer(Customer):
+    def __init__(self, id: int, arrival_time: int, shopping_list: Dict[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
+        super().__init__(id, arrival_time, shopping_list, shop_environment, start_position, money, time)
+    def get_plan(self):
+        # Insert your code here
+        pass
+    def take(self, product: int, section: Section):
+        # Insert your code here
+        pass
+    def go(self, a: tuple, b: tuple):
+        # Insert your code here
+        pass
+    
+class RegularCustomer(Customer):
+    def __init__(self, id: int, arrival_time: int, shopping_list: Dict[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
+        super().__init__(id, arrival_time, shopping_list, shop_environment, start_position, money, time)
+    def get_plan(self):
+        # Insert your code here
+        pass
+    def take(self, product: int, section: Section):
+        # Insert your code here
+        pass
+    def go(self, a: tuple, b: tuple):
+        # Insert your code here
+        pass
