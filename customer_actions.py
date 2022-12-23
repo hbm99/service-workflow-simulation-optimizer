@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from customer import Customer
 from environment import Cell, ShopEnvironment
-#from typing import List
 
 
 class CustomerAction(ABC):
