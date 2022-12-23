@@ -24,14 +24,15 @@ from customer_actions import ACTIONS
 def run_shop(env, num_cashiers, shop_size, products, shelves_distribution):
     shop = ShopEnvironment(env, shop_size, products, shelves_distribution, num_cashiers)
     
-    for customer in range(3):
-        customer = generate_customer(env, shop)
+    for c in range(3):
+        customer = generate_customer(c, env, shop)
         env.process(go_shopping(env, customer, shop))
         
     while True:
         yield env.timeout(0.20)  # Wait a bit before generating a new customer
-
-        customer = generate_customer(env, shop)
+        
+        c+=1
+        customer = generate_customer(c, env, shop)
         env.process(go_shopping(env, customer, shop))
 
 def go_shopping(env, customer, shop):
@@ -65,8 +66,8 @@ def go_shopping(env, customer, shop):
     # # Moviegoer heads into the theater
     # wait_times.append(env.now - arrival_time)
     
-def generate_customer(env, shop):
-    return Customer(env.now, {}, shop)
+def generate_customer(counter, env, shop):
+    return Customer(counter,env.now, {}, shop)
 
 def tokenize(plan : str):
     return re.findall(r"[\w']+", plan)

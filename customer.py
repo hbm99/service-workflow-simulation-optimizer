@@ -15,7 +15,7 @@ class Customer: #(ABC)
     _buying_time = 0
     
     #@abstractmethod
-    def __init__(self, arrival_time : int, shopping_list : dict, shop_environment : ShopEnvironment, start_position : tuple = (0, 0), money : int = 10**10, time : int = 10**10):
+    def __init__(self, id, arrival_time : int, shopping_list : dict, shop_environment : ShopEnvironment, start_position : tuple = (0, 0), money : int = 10**10, time : int = 10**10):
         self._arrival_time = arrival_time
         self._shopping_list = shopping_list
         self._shop_environment = shop_environment
@@ -23,7 +23,7 @@ class Customer: #(ABC)
         self._products_cart = []
         self._money = money
         self._buying_time = time
-        self.index = 0 ######
+        self.id = id ######
         
     
     def get_products_cart(self):
@@ -51,7 +51,7 @@ class Customer: #(ABC)
         """
         pass
     
-    def take(self, product : int, section : Section):# : Section):
+    def take(self, product : int, section : Section):
         """
         Reduces shopping list by decrementing taken article.
         """
@@ -73,10 +73,11 @@ class Customer: #(ABC)
         # road = breadth_first_search(self._shop_environment.map, a, b)
         # self._current_section = self._shop_environment.map[b]
         # return road
-        self.index+=1
-        print('cliente')
-        print(self.index)
-        yield self._shop_environment.env.timeout(random.randint(1, 3))
+        print(self.id)
+        print("antes")
+        yield self._shop_environment.env.timeout(random.randint(10, 30))
+        print(self.id)
+        print("despues")
         
     def buy(self):
         """

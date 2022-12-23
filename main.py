@@ -10,7 +10,7 @@ def main():
     shop_size = 8
     num_cashiers = 1
     products = ['pizza', 'pan']
-    simulation_time = 500
+    simulation_time = 4
     shelves_distribution = [1, 0, 1]
     
     # Run the simulation
