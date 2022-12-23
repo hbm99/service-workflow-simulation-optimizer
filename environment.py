@@ -1,15 +1,22 @@
-from typing import List
+from typing import List, Dict
 import simpy
 
+
+class Product:
+    def __init__(self, name : str, price : int = 1) -> None:
+        self.name = name
+        self.price = price
+
 class ShopEnvironment:
-    def __init__(self, env, shop_size, products : List[str], shelves_distribution : List[int], num_cashiers : int = 1):
+    def __init__(self, env, shop_size, products : Dict[str, Product], shelves_distribution : List[int], num_cashiers : int = 1):
         self.env = env
         self.profit = 0
         self.cashier = simpy.Resource(env, num_cashiers)
+        self.products = products
         
         self.sections = []
         for i in range(len(shelves_distribution)):
-            self.sections.append(Section(products[shelves_distribution[i]], i))
+            self.sections.append(Section(products[list(products.keys())[shelves_distribution[i]]], i))
         
         self.cashiers = []
         for i in range(num_cashiers):
@@ -29,7 +36,7 @@ class ShopEnvironment:
     def insert_cashiers(self):
         cashiers_index = 0
         for i in range(2, len(self.map), 2):
-            cashier = self.cashier[cashiers_index]
+            cashier = self.cashiers[cashiers_index]
             cashier.position = (i, 0)
             self.map[i][0] = cashier
             cashiers_index+=1
@@ -47,10 +54,7 @@ class ShopEnvironment:
                 if sections_index == len(self.sections):
                     return
 
-class Product:
-    def __init__(self, name : str, price : int) -> None:
-        self.name = name
-        self.price = price
+
 
 class Cell:
     def __init__(self, position : tuple = (-1, -1)) -> None:

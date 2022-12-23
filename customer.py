@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import random
-from typing import Dict
+from typing import List
 from environment import Product, ShopEnvironment, Section
 
 
@@ -15,7 +15,7 @@ class Customer(ABC):
     _buying_time = 0
     
     @abstractmethod
-    def __init__(self, id : int, arrival_time : int, shopping_list : Dict[Product], shop_environment : ShopEnvironment, start_position : tuple = (0, 0), money : int = 10**10, time : int = 10**10):
+    def __init__(self, id : int, arrival_time : int, shopping_list : List[Product], shop_environment : ShopEnvironment, start_position : tuple = (0, 0), money : int = 10**10, time : int = 10**10):
         self.id = id
         self._arrival_time = arrival_time
         self._shopping_list = shopping_list
@@ -44,6 +44,10 @@ class Customer(ABC):
         """
         return self._shopping_list
     
+    def update_current_section(self, section_position):
+        i, j = section_position
+        self._current_section = self._shop_environment.map[i][j]
+
     @abstractmethod
     def get_plan(self):
         """
@@ -52,7 +56,7 @@ class Customer(ABC):
         pass
 
     @abstractmethod
-    def take(self, product : int, section : Section):
+    def take(self, product : Product):
         """
         Reduces shopping list by decrementing taken article and add to product car.
         """
@@ -68,49 +72,68 @@ class Customer(ABC):
     
     def buy(self):
         """
-        Goes to cashier for payment and spends money.
+        Goes to random cashier for payment and spends money.
         """
-        self.go(self._current_section.position, self._shop_environment.cashiers[random.randint(0, len(self._shop_environment.cashiers) - 1)].position)
+        selected_cashier_index = random.randint(0, len(self._shop_environment.cashiers) - 1)
+        
+        self.go(self._current_section.position, self._shop_environment.cashiers[selected_cashier_index].position)
+        
+        # waiting until the selected cashier gets free
+        while self._shop_environment.cashiers[selected_cashier_index].client_count == 1:
+            yield self._shop_environment.env.timeout(3)
+            
+        self._shop_environment.cashiers[selected_cashier_index].client_count+=1
         
         yield self._shop_environment.env.timeout(random.randint(len(self._products_cart) * 2, len(self._products_cart) * 5))
         
         self._shop_environment.profit+=sum([product.price for product in self._products_cart])
         
+        self._shop_environment.cashiers[selected_cashier_index].client_count-=1
+        
 class InAHurryCustomer(Customer):
-    def __init__(self, id: int, arrival_time: int, shopping_list: Dict[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
+    def __init__(self, id: int, arrival_time: int, shopping_list: List[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
         super().__init__(id, arrival_time, shopping_list, shop_environment, start_position, money, time)
     def get_plan(self):
         # Insert your code here
         pass
-    def take(self, product: int, section: Section):
+    def take(self, product: Product):
         # Insert your code here
-        pass
+        yield self._shop_environment.env.timeout(random.randint(1, 3))
+        # Insert your code here
     def go(self, a: tuple, b: tuple):
         # Insert your code here
-        pass
+        yield self._shop_environment.env.timeout(random.randint(1, 3))
+        self.update_current_section(b)
+        # Insert your code here
     
 class ConsumeristCustomer(Customer):
-    def __init__(self, id: int, arrival_time: int, shopping_list: Dict[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
+    def __init__(self, id: int, arrival_time: int, shopping_list: List[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
         super().__init__(id, arrival_time, shopping_list, shop_environment, start_position, money, time)
     def get_plan(self):
         # Insert your code here
         pass
-    def take(self, product: int, section: Section):
+    def take(self, product: Product):
         # Insert your code here
-        pass
+        yield self._shop_environment.env.timeout(random.randint(1, 3))
+        # Insert your code here
     def go(self, a: tuple, b: tuple):
         # Insert your code here
-        pass
+        yield self._shop_environment.env.timeout(random.randint(1, 3))
+        self.update_current_section(b)
+        # Insert your code here
     
 class RegularCustomer(Customer):
-    def __init__(self, id: int, arrival_time: int, shopping_list: Dict[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
+    def __init__(self, id: int, arrival_time: int, shopping_list: List[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
         super().__init__(id, arrival_time, shopping_list, shop_environment, start_position, money, time)
     def get_plan(self):
         # Insert your code here
         pass
-    def take(self, product: int, section: Section):
+    def take(self, product: Product):
         # Insert your code here
-        pass
+        yield self._shop_environment.env.timeout(random.randint(1, 3))
+        # Insert your code here
     def go(self, a: tuple, b: tuple):
         # Insert your code here
-        pass
+        yield self._shop_environment.env.timeout(random.randint(1, 3))
+        self.update_current_section(b)
+        # Insert your code here
