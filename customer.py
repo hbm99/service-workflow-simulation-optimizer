@@ -4,6 +4,7 @@ from typing import List
 from environment import Product, ShopEnvironment, Section
 from walking_problem.heuristic_problem_utils import astar_search, path_actions
 from walking_problem.walking_problem_utils import WalkingProblem
+import utils
 
 
 class Customer(ABC):
@@ -111,12 +112,39 @@ class ConsumeristCustomer(AStarGoCustomer):
     def __init__(self, id: int, arrival_time: int, shopping_list: List[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
         super().__init__(id, arrival_time, shopping_list, shop_environment, start_position, money, time)
     def get_plan(self):
-        # Insert your code here
-        pass
+        planning=[]
+        current_section= None
+        aux_shopping_list= self._shopping_list
+
+        for sec in self._shop_environment.sections:
+            # Go action
+            if current_section is  None:
+                action= "Go("+ str(sec.index_in_sections)+ ")"
+            else:
+                action= "Go("+ str(sec.index_in_sections) + ","+ str(sec.index_in_sections)+ ")"
+            current_section= sec
+            planning.append(action)
+
+            # Take action
+            extra_product = random.random()
+            product_founded = current_section.product in aux_shopping_list
+            if(extra_product > 0.6 or product_founded):
+                action= "Take("+ self._current_section.product.name + ")"
+                if(product_founded): aux_shopping_list.remove(current_section.product)
+            planning.append(action)
+
+        # Buy action
+        action= "Buy()"
+        planning.append(action)
+
+        return planning
+        
     def take(self, product: Product):
-        # Insert your code here
-        yield self._shop_environment.env.timeout(random.randint(1, 3))
-        # Insert your code here
+
+        yield self._shop_environment.env.timeout(random.randint(1, 3 + 2 * (self._current_section.client_count-1)))
+        self._shopping_list.remove(product)
+        self._products_cart.append(product)
+        
     
 class RegularCustomer(Customer):
     def __init__(self, id: int, arrival_time: int, shopping_list: List[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
