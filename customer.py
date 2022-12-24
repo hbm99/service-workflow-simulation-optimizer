@@ -118,10 +118,13 @@ class InAHurryCustomer(AStarGoCustomer):
         # order by sections'clients_count
         sections_list.sort(key=self.clients_in_section)
         
+        # build str(plan)
         plan = ["Go("+ str(sections_list[0].index_in_sections) + ")"]
         previous_section = sections_list[0].index_in_sections
         
-        for section in sections_list:
+        for i in range(1, len(sections_list)):
+            
+            section = sections_list[i]
             
             go_action = "Go("+ str(previous_section.index_in_sections) + ","+ str(section.index_in_sections)+ ")"
             previous_section = section
@@ -130,7 +133,7 @@ class InAHurryCustomer(AStarGoCustomer):
             take_action = "Take("+ section.product.name + ")"
             plan.append(take_action)
         
-        buy_action= "Buy()"
+        buy_action = "Buy()"
         plan.append(buy_action)
         
         return plan
