@@ -146,11 +146,14 @@ class InAHurryCustomer(AStarGoCustomer):
         
     
     def take(self, product: Product):
-        if self._current_section.client_count > 3:  #hurry client => if there is too much people in section, doesn't buy article!!
+        if self._current_section.client_count > 15:  #hurry client => if there is too much people in section, doesn't buy article!!
             return
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         self._products_cart.append(product)
         self._shopping_list.remove(product)
+        
+    def __str__(self) -> str:
+        return str(self.id) + ': InAHurryCustomer'
         
     
 class ConsumeristCustomer(AStarGoCustomer):
@@ -192,7 +195,10 @@ class ConsumeristCustomer(AStarGoCustomer):
             self._shopping_list.remove(product)
         self._products_cart.append(product)
         
-    
+    def __str__(self) -> str:
+        return str(self.id) + ': ConsumeristCustomer'
+        
+
 class RegularCustomer(Customer):
     def __init__(self, id: int, arrival_time: int, shopping_list: List[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
         super().__init__(id, arrival_time, shopping_list, shop_environment, start_position, money, time)
@@ -208,3 +214,5 @@ class RegularCustomer(Customer):
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         self.update_current_section(b)
         # Insert your code here
+    def __str__(self) -> str:
+        return str(self.id) + ': RegularCustomer'
