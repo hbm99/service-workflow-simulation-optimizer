@@ -5,15 +5,6 @@ from environment import Product, ShopEnvironment, Section
 
 
 class Customer(ABC):
-    _arrival_time = 0
-    _shopping_list = {Section : int}
-    _shop_environment = None
-    _position = None
-    _products_cart = []
-    _money = 0
-    _current_section = None
-    _buying_time = 0
-    
     @abstractmethod
     def __init__(self, id : int, arrival_time : int, shopping_list : List[Product], shop_environment : ShopEnvironment, start_position : tuple = (0, 0), money : int = 10**10, time : int = 10**10):
         self.id = id

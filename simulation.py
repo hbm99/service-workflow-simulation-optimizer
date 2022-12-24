@@ -1,21 +1,3 @@
-# from typing import List
-# from customer import Customer, InAHurryCustomer
-
-# from environment import ShopEnvironment
-
-
-# class Simulation:
-#     CUSTOMER_TYPE = [InAHurryCustomer]
-#     def __init__(self, products : List[str], simulation_time : int, shop_environment : ShopEnvironment, shelves_distribution : List[int]) -> None:
-#         self.products = products
-#         self.shop_environment = shop_environment
-#         self.shelves_distribution = shelves_distribution
-#         self.simulation_time = simulation_time
-    
-#     def execute(self):
-#         pass
-
-
 import random
 from typing import List
 from customer import ConsumeristCustomer, InAHurryCustomer, RegularCustomer
