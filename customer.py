@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import random
 from typing import List
-from environment import Product, ShopEnvironment
+from environment import Product, Section, ShopEnvironment
 from walking_problem.heuristic_problem_utils import astar_search, path_actions
 from walking_problem.walking_problem_utils import WalkingProblem
 
@@ -99,13 +99,43 @@ class AStarGoCustomer(Customer):
 class InAHurryCustomer(AStarGoCustomer):
     def __init__(self, id: int, arrival_time: int, shopping_list: List[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
         super().__init__(id, arrival_time, shopping_list, shop_environment, start_position, money, time)
+    
     def get_plan(self):
-        # Insert your code here
-        pass
+        """
+        Gets a greedy plan depending on clients count in sections.
+        """
+        # get sections with shopping list products
+        sections_list = []
+        for section in self._shop_environment.sections:
+            if section.product in self._shopping_list:
+                sections_list.append(section)
+        
+        # remove duplicated sections
+        for i in range(len(sections_list)):
+            for j in range(len(sections_list)):
+                if i == j:
+                    continue
+                if sections_list[i] == sections_list[j]:
+                    sections_list.pop(j)
+        
+        
+        # Pending converting ordered shopping list to str instructions to send to simulation.py
+        
+        sections_list.sort(key=self.clients_in_section)
+        
+        
+        
+    def clients_in_section(self, section):
+        return section.client_count
+        
+    
     def take(self, product: Product):
-        # Insert your code here
+        if self._current_section.client_count > 3:  #hurry client => if there is too much people in section, doesn't buy article!!
+            return
         yield self._shop_environment.env.timeout(random.randint(1, 3))
-        # Insert your code here
+        self._products_cart.append(product)
+        self._shopping_list.remove(product)
+        
     
 class ConsumeristCustomer(AStarGoCustomer):
     def __init__(self, id: int, arrival_time: int, shopping_list: List[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
