@@ -171,16 +171,19 @@ def breadth_first_tree_search(problem):
     The argument frontier should be an empty queue.
     Repeats infinitely in case of loops.
     """
-    print("pod no")
+
     frontier = deque([Node(problem.initial)])  # FIFO queue
-    
+    count = 0
     while frontier:
+    
         node = frontier.popleft()
-        print(node.state)
         if problem.goal_test(node.state):
             return node
         frontier.extend(node.expand(problem))
+        count += 1
+        if count >= 2000: return node
     return None
+
 
 
 def depth_first_tree_search(problem):
@@ -211,17 +214,26 @@ def depth_first_graph_search(problem):
     Does not get trapped by loops.
     If two paths reach a state, only use the first one.
     """
+    print("1")
     frontier = [(Node(problem.initial))]  # Stack
 
+    print(1)
     explored = set()
+    print(2)
     while frontier:
+        
         node = frontier.pop()
+        print(node.state)
         if problem.goal_test(node.state):
+            print("hola")
             return node
         explored.add(node.state)
-        frontier.extend(child for child in node.expand(problem)
+        #HEREEEE
+        frontier.extend(print(child) for child in node.expand(problem)
                         if child.state not in explored and child not in frontier)
-    return None
+        print(len(frontier))
+    return 5.0
+    print("kk")
 
 
 def breadth_first_graph_search(problem):
