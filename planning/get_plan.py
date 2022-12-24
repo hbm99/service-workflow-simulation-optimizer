@@ -275,15 +275,16 @@ def shopping_problem(client, enviroment):
     for i in range(1, len(shopping_list)):
         goal += f" & Have({shopping_list[i]})"
 
-    for section in list(client._shopping_list.keys()):
-        initial += f" & Sells({section.index_in_sections}, {section.product.name})"
-        domainn += f" & Section({section.index_in_sections})"
-        domainn += f" & Place({section.index_in_sections})"
-        domainn += f" & Product({section.product.name})"
+    sections = enviroment.sections
+    for i in range(sections):
+        initial += f" & Sells({i}, {sections[i].name})"
+        domain += f" & Section({i})"
+        domain += f" & Place({i})"
+        domain += f" & Product({sections[i].name})"
 
     print(initial, "initial")
     print(goal, "goal")
-    print(domainn, "dom")
+    print(domain, "dom")
 
     return PlanningProblem(initial=initial,
                            goals=goal,
@@ -292,11 +293,7 @@ def shopping_problem(client, enviroment):
                                            precond='At(a) & Sells(a, x)',
                                            effect='Have(x)',
                                            domain='Section(a) & Product(x)'),
-                                           
-                                   Action('Take(x, a)',
-                                           precond='At(a) & Sells(a, x)',
-                                           effect='Have(x)',
-                                           domain='Section(a) & Product(x)'),
+                                                                             
 
                                     Action('Go(x, y)',
                                            precond='At(x)',
