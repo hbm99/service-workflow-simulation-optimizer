@@ -2,7 +2,7 @@ import random as rd
 from itertools import combinations
 import math
 
-class Tabu_Search():
+class TabuSearch():
     def __init__(self, shelf_count, products, max_iter,  tabu_tenure = 2):
         
         #Tabu Tenure: This defines the size of the Tabu list, i.e., for how many 
