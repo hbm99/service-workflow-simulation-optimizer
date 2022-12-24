@@ -41,8 +41,9 @@ def run_shop(env, num_cashiers, shop_size, products, shelves_distribution):
 
 def go_shopping(env, customer, shop):
     
-    planning =  customer.get_plan()
+    planning = customer.get_plan()
     print(planning)# ver cómo gestionar el tema de los tipos de clientes que su get_plan no devuelva los strings de planning
+    print("WHAT")# ver cómo gestionar el tema de los tipos de clientes que su get_plan no devuelva los strings de planning
     
     for plan in planning:
         tokens = tokenize(plan)

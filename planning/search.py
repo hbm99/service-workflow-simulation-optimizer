@@ -181,8 +181,9 @@ def breadth_first_tree_search(problem):
             return node
         frontier.extend(node.expand(problem))
         count += 1
-        if count >= 2000: return node
-    return None
+        if count >= 5000: return node
+    return frontier
+
 
 
 

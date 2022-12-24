@@ -1,4 +1,5 @@
 import itertools
+from lib2to3.pytree import convert
 import numpy as np
 from planning.utils import *
 from planning.logic import *
@@ -254,41 +255,50 @@ class Action:
 
         return kb
 
-def get_solution(problem):
-    solution = breadth_first_tree_search(ForwardPlan(problem)).solution()
-    solution = list(map(lambda action: Expr(action.name, *action.args), solution))
-    return solution
+
 
 ######################################## Main method #####################################################3
+
+CONVERT_INT = {"0": "Zero", "1": "One", "2": "Two", "3": "Three", "4": "Four", "5":"Five"}
+
+def get_planning(problem):
+    solution = breadth_first_tree_search(ForwardPlan(problem)).solution()
+    solution = list(map(lambda action: Expr(action.name, *action.args), solution))
+    final_sol = []
+    for i in solution:
+        action = str(i)
+        for j in CONVERT_INT.keys():
+            action = action.replace(CONVERT_INT[j], j)
+        final_sol.append(action)
+    return final_sol
 
 def shopping_problem(client, enviroment):
     """return an action list for a regular client"""
   
-    shopping_list = []
     # Taking the products of the client shopping list 
-    shopping_list.extend(section.product for section in list(client._shopping_list.keys()))
+    shopping_list = client._shopping_list
     initial = "At(Entry)"
     domain = "Place(Entry)"
-    goal = f'Have({shopping_list[0]})'
+    goal = f'Have({shopping_list[0].name})'
     for i in range(1, len(shopping_list)):
-        goal += f" & Have({shopping_list[i]})"
+        goal += f" & Have({shopping_list[i].name})"
 
     sections = enviroment.sections
-    for i in range(sections):
-        initial += f" & Sells({i}, {sections[i].name})"
-        domain += f" & Section({i})"
-        domain += f" & Place({i})"
-        domain += f" & Product({sections[i].name})"
+    for section in sections:
+        initial += f" & Sells({section.product.name}, {CONVERT_INT[str(section.index_in_sections)]})"
+        domain += f" & Section({CONVERT_INT[str(section.index_in_sections)]})"
+        domain += f" & Place({CONVERT_INT[str(section.index_in_sections)]})"
 
-    print(initial, "initial")
-    print(goal, "goal")
-    print(domain, "dom")
+    products = enviroment.products
+    for product in products:
+        domain += f" & Product({product})"
+
 
     return PlanningProblem(initial=initial,
                            goals=goal,
                            actions=[
                                    Action('Take(x, a)',
-                                           precond='At(a) & Sells(a, x)',
+                                           precond='At(a) & Sells(x, a)',
                                            effect='Have(x)',
                                            domain='Section(a) & Product(x)'),
                                                                              
@@ -296,7 +306,7 @@ def shopping_problem(client, enviroment):
                                     Action('Go(x, y)',
                                            precond='At(x)',
                                            effect='At(y) & ~At(x)',
-                                           domain='Place(x) & Place(y)'),
+                                           domain='Place(x) & Section(y)'),
                          ],
                            domain=domain)
 

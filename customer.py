@@ -6,7 +6,7 @@ from sympy import false, true
 from environment import Product, ShopEnvironment, Section
 from costumer_utlils import dfs
 
-from planning.get_plan import shopping_problem
+from planning.get_plan import get_planning, shopping_problem
 
 
 
@@ -139,8 +139,10 @@ class RegularCustomer(Customer):
         super().__init__(id, arrival_time, shopping_list, shop_environment, start_position, money, time)
 
     def get_plan(self):
-        planification = shopping_problem(self, self.shop_environment)
-        return planification.append("Buy()")
+        problem = shopping_problem(self, self._shop_environment)
+        planification = get_planning(problem)
+        planification.append("Buy()")
+        return planification
 
     def take(self, product: Product):
         
