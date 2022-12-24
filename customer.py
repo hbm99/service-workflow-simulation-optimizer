@@ -149,6 +149,7 @@ class RegularCustomer(Customer):
         # Reduce in one, de client count of the cell
         map = self._shop_environment.map[a[0]][a[1]].client_count - 1
         path = dfs(map a,b)
+        #TODO Devolver path?
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         self.update_current_section(b)
         # Insert your code here
@@ -173,7 +174,7 @@ class RegularCustomer(Customer):
                     adj.append(step)
         return adj
 
-    def dfs(enviroment, start, target, path = [], visited = set()):
+    def dfs(map, start, target, path = [], visited = set()):
         path.append(start)
         visited.add(start)
         if start == target:
