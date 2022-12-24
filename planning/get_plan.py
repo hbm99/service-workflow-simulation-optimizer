@@ -1,11 +1,9 @@
 import itertools
 import numpy as np
-import search
-from planning import ForwardPlan
-from utils import *
-from logic import *
-from search import *
-from planning import *
+from planning.utils import *
+from planning.logic import *
+from planning.search import *
+from planning.planning import *
 
 ###################################### Auxiliar methods ############################################ 
 class PlanningProblem:

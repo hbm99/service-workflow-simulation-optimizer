@@ -6,6 +6,9 @@ from sympy import false, true
 from environment import Product, ShopEnvironment, Section
 from costumer_utlils import dfs
 
+from planning.get_plan import shopping_problem
+
+
 
 class Customer(ABC):
     _arrival_time = 0
@@ -126,8 +129,7 @@ class ConsumeristCustomer(Customer):
         # Insert your code here
 
 
-#######################################################3
-from planning.get_plan import shopping_problem
+##########################################################
 
 class RegularCustomer(Customer):
     def __init__(self, id: int, arrival_time: int, shopping_list: List[Product], 
@@ -136,24 +138,26 @@ class RegularCustomer(Customer):
 
         super().__init__(id, arrival_time, shopping_list, shop_environment, start_position, money, time)
 
-    def get_plan(self) -> list(str):
+    def get_plan(self):
         planification = shopping_problem(self, self.shop_environment)
         return planification.append("Buy()")
 
     def take(self, product: Product):
-        # Insert your code here
-        yield self._shop_environment.env.timeout(random.randint(1, 3))
+        
+        yield self._shop_environment.env.timeout(random.randint(1, 3 + 1 * (self._current_section.client_count-1)))
+        self._shopping_list.remove(product)
         self._products_cart.append(product)
-        self._shopping_list.pop()
+
 
     def go(self, a: tuple, b: tuple):
-        # Reduce in one, de client count of the cell
+        
         map = self._shop_environment.map[a[0]][a[1]].client_count - 1
         path = dfs(map, a, b)
-        #TODO Devolver path?
+
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         self.update_current_section(b)
-        # Insert your code here
+        return len(path)
+        
 
  
 
