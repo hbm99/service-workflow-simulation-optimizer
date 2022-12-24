@@ -4,6 +4,8 @@ from typing import List
 from environment import Product, ShopEnvironment
 from walking_problem.heuristic_problem_utils import astar_search, path_actions
 from walking_problem.walking_problem_utils import WalkingProblem
+import utils
+
 
 class Customer(ABC):
     @abstractmethod
@@ -13,6 +15,7 @@ class Customer(ABC):
         self._shopping_list = shopping_list
         self._shop_environment = shop_environment
         self._position = start_position
+        self._current_section = None
         self._products_cart = []
         self._money = money
         self._buying_time = time
@@ -84,7 +87,8 @@ class Customer(ABC):
 
 class AStarGoCustomer(Customer):
     def go(self, a: tuple, b: tuple):
-        self._current_section.client_count-=1
+        if self._current_section is not None:
+            self._current_section.client_count-=1
         walking_problem = WalkingProblem(a, [b], shop_map = self._shop_environment.map)
         solution = astar_search(walking_problem)
         walking_time = len(path_actions(solution))
@@ -119,7 +123,7 @@ class InAHurryCustomer(AStarGoCustomer):
         
         # build str(plan)
         plan = ["Go("+ str(sections_list[0].index_in_sections) + ")"]
-        previous_section = sections_list[0].index_in_sections
+        previous_section = sections_list[0]
         
         for i in range(1, len(sections_list)):
             
@@ -142,24 +146,59 @@ class InAHurryCustomer(AStarGoCustomer):
         
     
     def take(self, product: Product):
-        if self._current_section.client_count > 3:  #hurry client => if there is too much people in section, doesn't buy article!!
+        if self._current_section.client_count > 15:  #hurry client => if there is too much people in section, doesn't buy article!!
             return
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         self._products_cart.append(product)
         self._shopping_list.remove(product)
+        
+    def __str__(self) -> str:
+        return str(self.id) + ': InAHurryCustomer'
         
     
 class ConsumeristCustomer(AStarGoCustomer):
     def __init__(self, id: int, arrival_time: int, shopping_list: List[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
         super().__init__(id, arrival_time, shopping_list, shop_environment, start_position, money, time)
     def get_plan(self):
-        # Insert your code here
-        pass
+
+        planning=["Go("+ str(0)+ ")"]
+
+        prev_section= self._shop_environment.sections[0]
+        aux_shopping_list= self._shopping_list
+
+        for i in range(1,len(self._shop_environment.sections)):
+            sec= self._shop_environment.sections[i]
+            
+            # Go action
+            action= "Go("+ str(prev_section.index_in_sections) + ","+ str(sec.index_in_sections)+ ")"
+            prev_section= sec
+            planning.append(action)
+
+            # Take action
+            extra_product = random.random()
+            product_founded = prev_section.product in aux_shopping_list
+            if(extra_product > 0.6 or product_founded):
+                action= "Take("+ sec.product.name + ")"
+                if(product_founded): aux_shopping_list.remove(prev_section.product)
+            planning.append(action)
+
+        # Buy action
+        action= "Buy()"
+        planning.append(action)
+
+        return planning
+        
     def take(self, product: Product):
-        # Insert your code here
-        yield self._shop_environment.env.timeout(random.randint(1, 3))
-        # Insert your code here
-    
+
+        yield self._shop_environment.env.timeout(random.randint(1, 3 + 2 * (self._current_section.client_count-1)))
+        if product in self._shopping_list:
+            self._shopping_list.remove(product)
+        self._products_cart.append(product)
+        
+    def __str__(self) -> str:
+        return str(self.id) + ': ConsumeristCustomer'
+        
+
 class RegularCustomer(Customer):
     def __init__(self, id: int, arrival_time: int, shopping_list: List[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
         super().__init__(id, arrival_time, shopping_list, shop_environment, start_position, money, time)
@@ -175,3 +214,5 @@ class RegularCustomer(Customer):
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         self.update_current_section(b)
         # Insert your code here
+    def __str__(self) -> str:
+        return str(self.id) + ': RegularCustomer'
