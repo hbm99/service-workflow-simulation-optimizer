@@ -15,6 +15,7 @@ class Customer(ABC):
         self._shopping_list = shopping_list
         self._shop_environment = shop_environment
         self._position = start_position
+        self._current_section = None
         self._products_cart = []
         self._money = money
         self._buying_time = time
@@ -86,7 +87,8 @@ class Customer(ABC):
 
 class AStarGoCustomer(Customer):
     def go(self, a: tuple, b: tuple):
-        self._current_section.client_count-=1
+        if self._current_section is not None:
+            self._current_section.client_count-=1
         walking_problem = WalkingProblem(a, [b], shop_map = self._shop_environment.map)
         solution = astar_search(walking_problem)
         walking_time = len(path_actions(solution))
@@ -121,7 +123,7 @@ class InAHurryCustomer(AStarGoCustomer):
         
         # build str(plan)
         plan = ["Go("+ str(sections_list[0].index_in_sections) + ")"]
-        previous_section = sections_list[0].index_in_sections
+        previous_section = sections_list[0]
         
         for i in range(1, len(sections_list)):
             
@@ -173,7 +175,7 @@ class ConsumeristCustomer(AStarGoCustomer):
             extra_product = random.random()
             product_founded = prev_section.product in aux_shopping_list
             if(extra_product > 0.6 or product_founded):
-                action= "Take("+ self.sec.product.name + ")"
+                action= "Take("+ sec.product.name + ")"
                 if(product_founded): aux_shopping_list.remove(prev_section.product)
             planning.append(action)
 
@@ -186,7 +188,8 @@ class ConsumeristCustomer(AStarGoCustomer):
     def take(self, product: Product):
 
         yield self._shop_environment.env.timeout(random.randint(1, 3 + 2 * (self._current_section.client_count-1)))
-        self._shopping_list.remove(product)
+        if product in self._shopping_list:
+            self._shopping_list.remove(product)
         self._products_cart.append(product)
         
     

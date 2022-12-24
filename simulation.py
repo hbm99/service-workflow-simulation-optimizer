@@ -5,7 +5,7 @@ from environment import Product, ShopEnvironment
 import re
 from customer_actions import ACTIONS
 
-CUSTOMER_TYPES = [InAHurryCustomer, RegularCustomer, ConsumeristCustomer]
+CUSTOMER_TYPES = [InAHurryCustomer, ConsumeristCustomer] # pending add regular customer
 
 def run_shop(env, num_cashiers, shop_size, products, shelves_distribution):
     shop = ShopEnvironment(env, shop_size, products, shelves_distribution, num_cashiers)
@@ -23,7 +23,7 @@ def run_shop(env, num_cashiers, shop_size, products, shelves_distribution):
 
 def go_shopping(env, customer, shop):
     
-    planning = ["Go(0, 1)", "Take(pizza)", "Buy()"] # customer.get_plan() # ver cómo gestionar el tema de los tipos de clientes que su get_plan no devuelva los strings de planning
+    planning = customer.get_plan()
     
     for plan in planning:
         tokens = tokenize(plan)
