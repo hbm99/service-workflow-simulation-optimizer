@@ -5,7 +5,6 @@ from environment import Product, Section, ShopEnvironment
 from walking_problem.heuristic_problem_utils import astar_search, path_actions
 from walking_problem.walking_problem_utils import WalkingProblem
 
-
 class Customer(ABC):
     @abstractmethod
     def __init__(self, id : int, arrival_time : int, shopping_list : List[Product], shop_environment : ShopEnvironment, start_position : tuple = (0, 0), money : int = 10**10, time : int = 10**10):
