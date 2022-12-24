@@ -85,9 +85,6 @@ class Customer(ABC):
 
 class AStarGoCustomer(Customer):
     def go(self, a: tuple, b: tuple):
-        """
-        Moves from section A to section B.
-        """
         self._current_section.client_count-=1
         walking_problem = WalkingProblem(a, [b], shop_map = self._shop_environment.map)
         solution = astar_search(walking_problem)
@@ -118,13 +115,26 @@ class InAHurryCustomer(AStarGoCustomer):
                 if sections_list[i] == sections_list[j]:
                     sections_list.pop(j)
         
-        
-        # Pending converting ordered shopping list to str instructions to send to simulation.py
-        
+        # order by sections'clients_count
         sections_list.sort(key=self.clients_in_section)
         
+        plan = ["Go("+ str(sections_list[0].index_in_sections) + ")"]
+        previous_section = sections_list[0].index_in_sections
         
+        for section in sections_list:
+            
+            go_action = "Go("+ str(previous_section.index_in_sections) + ","+ str(section.index_in_sections)+ ")"
+            previous_section = section
+            plan.append(go_action)
+
+            take_action = "Take("+ section.product.name + ")"
+            plan.append(take_action)
         
+        buy_action= "Buy()"
+        plan.append(buy_action)
+        
+        return plan
+                
     def clients_in_section(self, section):
         return section.client_count
         
