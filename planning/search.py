@@ -214,26 +214,25 @@ def depth_first_graph_search(problem):
     Does not get trapped by loops.
     If two paths reach a state, only use the first one.
     """
-    print("1")
+
     frontier = [(Node(problem.initial))]  # Stack
 
-    print(1)
+
     explored = set()
-    print(2)
+    
     while frontier:
         
         node = frontier.pop()
         print(node.state)
         if problem.goal_test(node.state):
-            print("hola")
             return node
         explored.add(node.state)
-        #HEREEEE
+ 
         frontier.extend(print(child) for child in node.expand(problem)
                         if child.state not in explored and child not in frontier)
         print(len(frontier))
     return 5.0
-    print("kk")
+
 
 
 def breadth_first_graph_search(problem):
