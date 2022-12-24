@@ -4,6 +4,7 @@ from typing import List
 
 from sympy import false, true
 from environment import Product, ShopEnvironment, Section
+from costumer_utlils import dfs
 
 
 class Customer(ABC):
@@ -148,44 +149,11 @@ class RegularCustomer(Customer):
     def go(self, a: tuple, b: tuple):
         # Reduce in one, de client count of the cell
         map = self._shop_environment.map[a[0]][a[1]].client_count - 1
-        path = dfs(map a,b)
+        path = dfs(map, a, b)
         #TODO Devolver path?
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         self.update_current_section(b)
         # Insert your code here
-
-################### Auxiliar methods for Go with dfs #############################################
-    def Valid_pos(map, step) -> bool:
-        try:
-            map[step[0], step[1]]
-        except:
-            return false
-            
-        return true
-
-    def Take_adj_list(map, a):
-        adj = []
-        for dr in [-1, 0, 1]:
-            for dc in [-1, 0, 1]:
-                if dr == dc == 0:
-                    continue
-                step = (a[0]+dr, a[1]+dc)
-                if Valid_pos(map, step):
-                    adj.append(step)
-        return adj
-
-    def dfs(map, start, target, path = [], visited = set()):
-        path.append(start)
-        visited.add(start)
-        if start == target:
-            return path
-        for neighbour in Take_adj_list(map, start):
-            if neighbour not in visited:
-                result = dfs(neighbour, target, path, visited)
-                if result is not None:
-                    return result
-        path.pop()
-        return None
 
  
 
