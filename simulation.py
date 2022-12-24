@@ -38,23 +38,22 @@ def go_shopping(env, customer, shop):
         
     
 def generate_customer(id, env, shop):
-    random_index = random.randint(0, len(CUSTOMER_TYPES) - 1)
     shopping_list = fill_shopping_list(shop)
     arrival_time = env.now
-    client = CUSTOMER_TYPES[random_index](id, arrival_time, shopping_list, shop)
+    client_type = random.choice(CUSTOMER_TYPES)
+    client = client_type(id, arrival_time, shopping_list, shop)
     return client
 
 def fill_shopping_list(shop):
-    random.seed(45)
     products : List[Product] = list(shop.products.values())
     shopping_list = []
     len_shopping_list = random.randint(1, len(products))
     possible_indexes = [i for i in range(len(products))]
 
     for i in range(len_shopping_list):
-        index = random.choice(possible_indexes)
-        possible_indexes.pop(index)
-        shopping_list.append(products[index])
+        index_value = random.choice(possible_indexes)
+        possible_indexes.remove(index_value)
+        shopping_list.append(products[index_value])
     
     return shopping_list
 
