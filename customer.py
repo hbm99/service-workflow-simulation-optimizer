@@ -112,25 +112,26 @@ class ConsumeristCustomer(AStarGoCustomer):
     def __init__(self, id: int, arrival_time: int, shopping_list: List[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
         super().__init__(id, arrival_time, shopping_list, shop_environment, start_position, money, time)
     def get_plan(self):
-        planning=[]
-        current_section= None
+
+        planning=["Go("+ str(0)+ ")"]
+
+        prev_section= self._shop_environment.sections[0]
         aux_shopping_list= self._shopping_list
 
-        for sec in self._shop_environment.sections:
+        for i in range(1,len(self._shop_environment.sections)):
+            sec= self._shop_environment.sections[i]
+            
             # Go action
-            if current_section is  None:
-                action= "Go("+ str(sec.index_in_sections)+ ")"
-            else:
-                action= "Go("+ str(sec.index_in_sections) + ","+ str(sec.index_in_sections)+ ")"
-            current_section= sec
+            action= "Go("+ str(prev_section.index_in_sections) + ","+ str(sec.index_in_sections)+ ")"
+            prev_section= sec
             planning.append(action)
 
             # Take action
             extra_product = random.random()
-            product_founded = current_section.product in aux_shopping_list
+            product_founded = prev_section.product in aux_shopping_list
             if(extra_product > 0.6 or product_founded):
-                action= "Take("+ self._current_section.product.name + ")"
-                if(product_founded): aux_shopping_list.remove(current_section.product)
+                action= "Take("+ self.sec.product.name + ")"
+                if(product_founded): aux_shopping_list.remove(prev_section.product)
             planning.append(action)
 
         # Buy action
