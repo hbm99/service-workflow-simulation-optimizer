@@ -2,18 +2,11 @@ from abc import ABC, abstractmethod
 import random
 from typing import List
 from environment import Product, ShopEnvironment, Section
+from walking_problem.heuristic_problem_utils import astar_search, path_actions
+from walking_problem.walking_problem_utils import WalkingProblem
 
 
 class Customer(ABC):
-    _arrival_time = 0
-    _shopping_list = {Section : int}
-    _shop_environment = None
-    _position = None
-    _products_cart = []
-    _money = 0
-    _current_section = None
-    _buying_time = 0
-    
     @abstractmethod
     def __init__(self, id : int, arrival_time : int, shopping_list : List[Product], shop_environment : ShopEnvironment, start_position : tuple = (0, 0), money : int = 10**10, time : int = 10**10):
         self.id = id
@@ -89,8 +82,21 @@ class Customer(ABC):
         self._shop_environment.profit+=sum([product.price for product in self._products_cart])
         
         self._shop_environment.cashiers[selected_cashier_index].client_count-=1
-        
-class InAHurryCustomer(Customer):
+
+class AStarGoCustomer(Customer):
+    def go(self, a: tuple, b: tuple):
+        """
+        Moves from section A to section B.
+        """
+        self._current_section.client_count-=1
+        walking_problem = WalkingProblem(a, [b], shop_map = self._shop_environment.map)
+        solution = astar_search(walking_problem)
+        walking_time = len(path_actions(solution))
+        yield self._shop_environment.env.timeout(walking_time)
+        self.update_current_section(b)
+        self._current_section.client_count+=1
+
+class InAHurryCustomer(AStarGoCustomer):
     def __init__(self, id: int, arrival_time: int, shopping_list: List[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
         super().__init__(id, arrival_time, shopping_list, shop_environment, start_position, money, time)
     def get_plan(self):
@@ -99,14 +105,9 @@ class InAHurryCustomer(Customer):
     def take(self, product: Product):
         # Insert your code here
         yield self._shop_environment.env.timeout(random.randint(1, 3))
-        # Insert your code here
-    def go(self, a: tuple, b: tuple):
-        # Insert your code here
-        yield self._shop_environment.env.timeout(random.randint(1, 3))
-        self.update_current_section(b)
         # Insert your code here
     
-class ConsumeristCustomer(Customer):
+class ConsumeristCustomer(AStarGoCustomer):
     def __init__(self, id: int, arrival_time: int, shopping_list: List[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
         super().__init__(id, arrival_time, shopping_list, shop_environment, start_position, money, time)
     def get_plan(self):
@@ -115,11 +116,6 @@ class ConsumeristCustomer(Customer):
     def take(self, product: Product):
         # Insert your code here
         yield self._shop_environment.env.timeout(random.randint(1, 3))
-        # Insert your code here
-    def go(self, a: tuple, b: tuple):
-        # Insert your code here
-        yield self._shop_environment.env.timeout(random.randint(1, 3))
-        self.update_current_section(b)
         # Insert your code here
     
 class RegularCustomer(Customer):
