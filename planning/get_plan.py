@@ -266,17 +266,14 @@ def get_solution(problem):
 def shopping_problem(client, enviroment):
     """return an action list for a regular client"""
   
-    sections = enviroment.sections
-    print(sections)
     shopping_list = []
     # Taking the products of the client shopping list 
     shopping_list.extend(section.product for section in list(client._shopping_list.keys()))
     initial = "At(Entry)"
-    domainn = "Place(Entry)"
+    domain = "Place(Entry)"
     goal = f'Have({shopping_list[0]})'
     for i in range(1, len(shopping_list)):
         goal += f" & Have({shopping_list[i]})"
-
 
     for section in list(client._shopping_list.keys()):
         initial += f" & Sells({section.index_in_sections}, {section.product.name})"
@@ -306,6 +303,6 @@ def shopping_problem(client, enviroment):
                                            effect='At(y) & ~At(x)',
                                            domain='Place(x) & Place(y)'),
                          ],
-                           domain=domainn)
+                           domain=domain)
 
 #get_solution(shopping_problem(4, e))

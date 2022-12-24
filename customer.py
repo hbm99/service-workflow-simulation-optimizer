@@ -121,17 +121,27 @@ class ConsumeristCustomer(Customer):
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         self.update_current_section(b)
         # Insert your code here
-    
+
+
+#######################################################3
+from planning.get_plan import shopping_problem
+
 class RegularCustomer(Customer):
-    def __init__(self, id: int, arrival_time: int, shopping_list: List[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
+    def __init__(self, id: int, arrival_time: int, shopping_list: List[Product], 
+                    shop_environment: ShopEnvironment, start_position: tuple = (0, 0), 
+                        money: int = 10 ** 10, time: int = 10 ** 10):
+
         super().__init__(id, arrival_time, shopping_list, shop_environment, start_position, money, time)
-    def get_plan(self):
-        # Insert your code here
-        pass
+
+    def get_plan(self) -> list(str):
+        planification = shopping_problem(self, self.shop_environment)
+        return planification.append("Buy()")
+
     def take(self, product: Product):
         # Insert your code here
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         # Insert your code here
+
     def go(self, a: tuple, b: tuple):
         # Insert your code here
         yield self._shop_environment.env.timeout(random.randint(1, 3))
