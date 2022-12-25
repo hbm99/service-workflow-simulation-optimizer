@@ -1,5 +1,6 @@
 import collections
-from environment import Section, Cashier, Cell
+import math
+from environment import Section, Cashier
 from walking_problem.heuristic_problem_utils import Problem
 
 DIR_ROW = [0, 1, 0, -1, 1, -1, -1, 1]
@@ -9,8 +10,9 @@ def distance(graph : list, root : tuple, destination : tuple):
     return len(breadth_first_search(graph, root, destination, True))
 
 def distance_no_obstacles(graph : list, root : tuple, destination : tuple):
-    length = breadth_first_search(graph, root, destination, False)
-    return length
+    distance_no_obstacles = math.sqrt((root[0] - destination[0]) ** 2 + (root[1] - destination[1]) ** 2)
+    # length = breadth_first_search(graph, root, destination, False)
+    return int(distance_no_obstacles)
 
 def breadth_first_search(graph : list, root : tuple, destination : tuple, obstacled : bool = True):
     
@@ -38,8 +40,8 @@ def breadth_first_search(graph : list, root : tuple, destination : tuple, obstac
     
     return road_to_root(pi, destination, [])
 
-def is_obstacle(object):
-    return isinstance(object, Section) or isinstance(object, Cashier)
+def is_obstacle(cell):
+    return isinstance(cell, Section) or isinstance(cell, Cashier)
 
 
 def road_to_root(pi: dict, node, road: list):
