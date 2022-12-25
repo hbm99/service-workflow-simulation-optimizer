@@ -264,12 +264,21 @@ CONVERT_INT = {"0": "Zero", "1": "One", "2": "Two", "3": "Three", "4": "Four", "
 def get_planning(problem):
     solution = breadth_first_tree_search(ForwardPlan(problem)).solution()
     solution = list(map(lambda action: Expr(action.name, *action.args), solution))
+    final_sol = preprocess(solution)
+    print(final_sol)
+    return final_sol
+
+def preprocess(solution: list):
     final_sol = []
-    for i in solution:
-        action = str(i)
+    for i in range(len(solution)):
+        action = str(solution[i])
+        if (i == 0):
+            action = action.replace("Entry", "")
+            action = action.replace(", ", "")
         for j in CONVERT_INT.keys():
             action = action.replace(CONVERT_INT[j], j)
         final_sol.append(action)
+    
     return final_sol
 
 def shopping_problem(client, enviroment):
