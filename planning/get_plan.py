@@ -265,7 +265,6 @@ def get_planning(problem):
     solution = breadth_first_tree_search(ForwardPlan(problem)).solution()
     solution = list(map(lambda action: Expr(action.name, *action.args), solution))
     final_sol = preprocess(solution)
-    print(final_sol)
     return final_sol
 
 def preprocess(solution: list):

@@ -1,11 +1,13 @@
 ################### Auxiliar methods for Go with dfs #############################################
     
+from sympy import true
+
+
 def Valid_pos(map, step) -> bool:
-    try:
-        map[step[0]], [step[1]]
-    except:
+    if(step[0] < 0 or step[1] < 0):
         return False
-            
+    if(step[0] > len(map[0]) or step[1] > len(map)):
+        return False
     return True
 
 def Take_adj_list(map, a):
@@ -19,14 +21,15 @@ def Take_adj_list(map, a):
                    adj.append(step)
     return adj
 
-def dfs(self, map, start, target, path = [], visited = set()):
+def dfs(map, start, target, path = [], visited = set()):
     path.append(start)
     visited.add(start)
     if start == target:
         return path
-    for neighbour in self.Take_adj_list(map, start):
+    neighborhood = Take_adj_list(map, start)
+    for neighbour in  neighborhood:
         if neighbour not in visited:
-            result = self.dfs(neighbour, target, path, visited)
+            result = dfs(map, neighbour, target, path, visited)
             if result is not None:
                 return result
     path.pop()

@@ -22,8 +22,7 @@ class ShopEnvironment:
         for i in range(num_cashiers):
             self.cashiers.append(Cashier())
         
-        #Change this for save map object as a property
-        self.map = self.init_map(shop_size)
+        self.init_map(shop_size)
         
     
     def init_map(self, shop_size):

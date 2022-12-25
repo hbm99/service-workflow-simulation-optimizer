@@ -152,13 +152,13 @@ class RegularCustomer(Customer):
 
 
     def go(self, a: tuple, b: tuple):
-        
-        map = self._shop_environment.map[a[0]][a[1]].client_count - 1
+        self._shop_environment.map[a[0]][a[1]].client_count - 1
+        map = self._shop_environment.map
         path = dfs(map, a, b)
 
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         self.update_current_section(b)
-        return len(path)
+        return path
         
 
  
