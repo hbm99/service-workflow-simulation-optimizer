@@ -233,4 +233,8 @@ class RegularCustomer(Customer):
 
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         self.update_current_section(b)
+        return path
+
+
+    def __str__(self) -> str:
         return str(self.id) + ': RegularCustomer'

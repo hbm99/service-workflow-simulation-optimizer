@@ -5,7 +5,8 @@ from environment import Product, ShopEnvironment
 import re
 from customer_actions import ACTIONS
 
-CUSTOMER_TYPES = [RegularCustomer, RegularCustomer, RegularCustomer]
+profits_in_time = []
+CUSTOMER_TYPES = [ConsumeristCustomer, InAHurryCustomer, RegularCustomer] # pending add regular customer
 
 def run_shop(env, num_cashiers, shop_size, products, shelves_distribution):
     shop = ShopEnvironment(env, shop_size, products, shelves_distribution, num_cashiers)
