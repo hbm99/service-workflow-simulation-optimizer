@@ -4,13 +4,12 @@ from typing import List
 
 from sympy import false, true
 from environment import Product, ShopEnvironment, Section
-from costumer_utlils import dfs
 
 from planning.get_plan import get_planning, shopping_problem
 
 from environment import Product, ShopEnvironment
 from walking_problem.heuristic_problem_utils import astar_search, path_actions
-from walking_problem.walking_problem_utils import WalkingProblem
+from walking_problem.walking_problem_utils import WalkingProblem, depth_first_search
 import utils
 
 
@@ -229,7 +228,7 @@ class RegularCustomer(Customer):
     def go(self, a: tuple, b: tuple):
         self._shop_environment.map[a[0]][a[1]].client_count - 1
         map = self._shop_environment.map
-        path = dfs(map, a, b)
+        path = depth_first_search(map, a, b)
 
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         self.update_current_section(b)
