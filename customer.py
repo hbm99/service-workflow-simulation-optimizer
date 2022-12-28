@@ -25,6 +25,7 @@ class Customer(ABC):
         self._products_cart = []
         self._money = money
         self._buying_time = time
+        self._people_at_shop = 0
         
     
     def get_products_cart(self):
@@ -152,6 +153,7 @@ class InAHurryCustomer(AStarGoCustomer):
         
     
     def take(self, product: Product):
+        self._people_at_shop += self._current_section.client_count -1 + 2
         if self._current_section.client_count > 15:  #hurry client => if there is too much people in section, doesn't buy article!!
             return
         yield self._shop_environment.env.timeout(random.randint(1, 3))
@@ -196,6 +198,7 @@ class ConsumeristCustomer(AStarGoCustomer):
         
     def take(self, product: Product):
 
+        self._people_at_shop += self._current_section.client_count -1 -1
         yield self._shop_environment.env.timeout(random.randint(1, 3 + 2 * (self._current_section.client_count-1)))
         if product in self._shopping_list:
             self._shopping_list.remove(product)
@@ -209,8 +212,9 @@ class RegularCustomer(Customer):
     def __init__(self, id: int, arrival_time: int, shopping_list: List[Product], 
                     shop_environment: ShopEnvironment, start_position: tuple = (0, 0), 
                         money: int = 10 ** 10, time: int = 10 ** 10):
-
         super().__init__(id, arrival_time, shopping_list, shop_environment, start_position, money, time)
+        
+
 
     def get_plan(self):
         problem = shopping_problem(self, self._shop_environment)
@@ -219,7 +223,7 @@ class RegularCustomer(Customer):
         return planification
 
     def take(self, product: Product):
-        
+        self._people_at_shop += self._current_section.client_count -1
         yield self._shop_environment.env.timeout(random.randint(1, 3 + 1 * (self._current_section.client_count-1)))
         self._shopping_list.remove(product)
         self._products_cart.append(product)

@@ -1,6 +1,7 @@
 import simpy
 from environment import Product
 from simulation import run_shop, profits_in_time
+from fuzzy_logic import set_up_fuzzy_tip
 
 
 
@@ -14,11 +15,10 @@ def main():
     
     # Run the simulation
     env = simpy.Environment()
-    env.process(run_shop(env, num_cashiers, shop_size, products, shelves_distribution))
+    tipping = set_up_fuzzy_tip(len(shelves_distribution))
+    env.process(run_shop(env, num_cashiers, shop_size, products, shelves_distribution, tipping))
     env.run(until=simulation_time)
-    
-    
-    
+
 
 
 if __name__ == "__main__":
