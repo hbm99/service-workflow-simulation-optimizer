@@ -176,11 +176,11 @@ class ConsumeristCustomer(AStarGoCustomer):
 
             # Take action
             extra_product = random.random()
-            product_founded = prev_section.product in aux_shopping_list
+            product_founded = sec.product in aux_shopping_list
             if(extra_product > 0.6 or product_founded):
                 action= "Take("+ sec.product.name + ")"
-                if(product_founded): aux_shopping_list.remove(prev_section.product)
-            planning.append(action)
+                if(product_founded): aux_shopping_list.remove(sec.product)
+                planning.append(action)
 
         # Buy action
         action= "Buy()"
