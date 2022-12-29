@@ -23,7 +23,7 @@ def main():
 
 if __name__ == "__main__":
     main()
-    print(profits_in_time[-1])
+    print(f"Shop profits in the day: {profits_in_time[-1]}")
 
 
 
