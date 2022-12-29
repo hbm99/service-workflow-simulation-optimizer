@@ -105,10 +105,12 @@ class InAHurryCustomer(AStarGoCustomer):
         Gets a greedy plan depending on clients count in sections.
         """
         # get sections with shopping list products
+        aux_shopping_list: List[Product] = self._shopping_list.copy()
         sections_list = []
         for section in self._shop_environment.sections:
-            if section.product in self._shopping_list:
+            if section.product in aux_shopping_list:
                 sections_list.append(section)
+                aux_shopping_list.remove(section.product)
         
         # remove duplicated sections
         for i in range(len(sections_list)):
@@ -146,7 +148,7 @@ class InAHurryCustomer(AStarGoCustomer):
         
     
     def take(self, product: Product):
-        if self._current_section.client_count > 15:  #hurry client => if there is too much people in section, doesn't buy article!!
+        if self._current_section.client_count > 20:  #hurry client => if there is too much people in section, doesn't buy article!!
             return
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         self._products_cart.append(product)
