@@ -5,8 +5,8 @@ from simulation import run_shop, profits_in_time
 
 
 def main():
-    shop_size = 8
-    num_cashiers = 1
+    shop_size = 100
+    num_cashiers = 20
     list_product = [Product('pizza', 10), Product('pan', 5), Product('tomate', 3), Product('lechuga', 1), Product('juguete', 20)]
     products = {item.name : item for item in list_product}
     simulation_time = 1000
