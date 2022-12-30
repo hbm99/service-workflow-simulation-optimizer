@@ -37,7 +37,7 @@ def go_shopping(env, customer, shop, tipping):
                 spended = shop.profit - actual_profits
 
                 # Tip logic
-                tipping.input['people_count'] = customer._people_at_shop
+                tipping.input['people_count'] = customer._people_perceived_at_shop
                 tipping.compute()
 
                 tip_percent = tipping.output['tip']

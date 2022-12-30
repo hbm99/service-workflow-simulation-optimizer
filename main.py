@@ -8,7 +8,7 @@ from fuzzy_logic import set_up_fuzzy_tip
 def main():
     shop_size = 100
     num_cashiers = 20
-    list_product = [Product('pizza', 10), Product('pan', 5), Product('tomate', 3), Product('lechuga', 1), Product('juguete', 20)]
+    list_product = [Product('PIZZA', 10), Product('PAN', 5), Product('TOMATE', 3), Product('LECHUGA', 1), Product('JUGUETE', 20)]
     products = {item.name : item for item in list_product}
     simulation_time = 1000
     shelves_distribution = [1, 0, 1, 2, 3, 4, 4, 2, 3, 1, 0, 0]
