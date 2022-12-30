@@ -173,9 +173,6 @@ def breadth_first_tree_search(problem, iterations = 500):
     """
 
     frontier = deque([Node(problem.initial)])
-    while str(frontier) == str(last_node):  # FIFO queue
-        last_node =  frontier
-        frontier = deque([Node(problem.initial)])
         
     while frontier:
         if iterations == 0:
