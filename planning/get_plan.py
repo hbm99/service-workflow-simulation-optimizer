@@ -1,6 +1,5 @@
 import itertools
 from lib2to3.pytree import convert
-from pydoc import resolve
 import numpy as np
 from planning.utils import *
 from planning.logic import *
@@ -260,21 +259,13 @@ class Action:
 
 
 ######################################## Main method #####################################################
-def get_planning(problem):
-    solution = resolve_planning(problem)
-    is_solution = True
-    for action in solution:
-        is_solution = "Take" in str(action)
-    while(not is_solution):
-        solution = resolve_planning(problem)
-    final_sol = preprocess(solution)
-    return final_sol   
 
-def resolve_planning(problem):
-    solution =  depth_first_tree_search(ForwardPlan(problem)).solution()   
+def get_planning(problem):
+    solution =  breadth_first_tree_search(ForwardPlan(problem)).solution()   
     solution = list(map(lambda action: Expr(action.name, *action.args), solution))
-    print(solution)
-    return solution
+    
+    final_sol = preprocess(solution)
+    return final_sol
 
 def preprocess(solution: list):
     final_sol = []
@@ -294,21 +285,40 @@ def shopping_problem(client, enviroment):
   
     # Taking the products of the client shopping list 
     shopping_list = client._shopping_list
+    sections = enviroment.sections
+    products = []
+
     initial = "At(Entry)"
     domain = "Place(Entry)"
     goal = f'Have({shopping_list[0].name})'
+    products.extend([section.product.name for section in sections])
+    
+
     for i in range(1, len(shopping_list)):
+        
         goal += f" & Have({shopping_list[i].name})"
+        domain += f" & Product({shopping_list[i].name})"
+        section_index = products.index(shopping_list[i].name)
+        domain += f" & Section({CONVERT_INT[str(section_index)]})"
+        domain += f" & Place({CONVERT_INT[str(section_index)]})"
+        initial += f" & Sells({shopping_list[i].name}, {CONVERT_INT[str(section_index)]})"
 
-    sections = enviroment.sections
-    for section in sections:
-        initial += f" & Sells({section.product.name}, {CONVERT_INT[str(section.index_in_sections)]})"
-        domain += f" & Section({CONVERT_INT[str(section.index_in_sections)]})"
-        domain += f" & Place({CONVERT_INT[str(section.index_in_sections)]})"
+    domain += f" & Product({shopping_list[0].name})"
+    section_index = products.index(shopping_list[0].name)
+    domain += f" & Section({CONVERT_INT[str(section_index)]})"
+    domain += f" & Place({CONVERT_INT[str(section_index)]})"
+    initial += f" & Sells({shopping_list[0].name}, {CONVERT_INT[str(section_index)]})"
 
-    products = enviroment.products
-    for product in products:
-        domain += f" & Product({product})"
+
+    #for section in sections:
+    
+        #initial += f" & Sells({section.product.name}, {CONVERT_INT[str(section.index_in_sections)]})"
+       # domain += f" & Section({CONVERT_INT[str(section.index_in_sections)]})"
+        #domain += f" & Place({CONVERT_INT[str(section.index_in_sections)]})"
+
+    #products = enviroment.products
+    #for product in products:
+        #domain += f" & Product({shopping_list[i].name})"
 
 
     return PlanningProblem(initial=initial,

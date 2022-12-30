@@ -226,8 +226,7 @@ class RegularCustomer(Customer):
     def take(self, product: Product):
         self._people_at_shop += self._current_section.client_count -1
         yield self._shop_environment.env.timeout(random.randint(1, 3 + 1 * (self._current_section.client_count-1)))
-        [print(i.name) for i in self._shopping_list]
-        print(product.name)
+
         if product in self._shopping_list:
             self._shopping_list.remove(product)
             self._products_cart.append(product)
