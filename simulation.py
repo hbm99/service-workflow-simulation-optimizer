@@ -14,13 +14,15 @@ def run_shop(env, num_cashiers, shop_size, products, shelves_distribution, tippi
     for id in range(3):
         customer = generate_customer(id, env, shop)
         env.process(go_shopping(env, customer, shop, tipping))
-        
+    
+   
     while True:
-        yield env.timeout(0.20)  # Wait a bit before generating a new customer
+        yield env.timeout(random.randint(30, 150))  # Wait a bit before generating a new customer
         
         id+=1
         customer = generate_customer(id, env, shop)
         env.process(go_shopping(env, customer, shop, tipping))
+    
 
 def go_shopping(env, customer, shop, tipping):
     
