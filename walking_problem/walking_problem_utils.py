@@ -45,7 +45,6 @@ def is_obstacle(cell):
     return isinstance(cell, Section) or isinstance(cell, Cashier)
 
 
-
 def road_to_root(pi: dict, node, road: list):
     if node not in pi.keys():
         return len(road)
@@ -54,7 +53,6 @@ def road_to_root(pi: dict, node, road: list):
 
 def is_inside(map, x, y):
     return x >= 0 and y >= 0 and x < len(map) and y < len(map[0])
-
 
 def take_adj_list(map, a):
     adj = []
@@ -67,20 +65,40 @@ def take_adj_list(map, a):
                    adj.append(step)
     return adj
 
-def depth_first_search(map, start, target, path = [], visited = set()):
-    path.append(start)
-    visited.add(start)
-    if start == target:
+
+def depth_first_search(map, path: list, goal: str, visited: dict) -> list:
+    """
+    Perform a Depth First Search step.
+    
+    Args:
+        map: problem graph
+        path: the current path of nodes
+        goal: the goal node label
+        visited: the dictionary of visited nodes
+    """
+    current = path[-1]
+    # if this is the goal, return the path
+    if current == goal:
+        #print(path)
         return path
-    neighborhood = take_adj_list(map, start)
-    for neighbour in  neighborhood:
-        if neighbour not in visited:
-            if is_obstacle(neighbour):
-                continue
-            result = depth_first_search(map, neighbour, target, path, visited)
-            if result is not None:
-                return result
-    path.pop()
+    # visit this node
+    visited[current] = True
+    # generate a list of unvisited children and iterate over it
+    #print(current)
+    neighborhood = take_adj_list(map, current)
+
+    unvisited = [child for child in neighborhood if child not in visited]
+    for child in unvisited:
+        # generate a new path and recursively call
+        new_path = list(path)
+        new_path.append(child)
+        sub_path = depth_first_search(map, new_path, goal, visited)
+        # make sure the sub path is valid before returning
+        if sub_path is not None:
+            return sub_path
+        else:
+            continue
+    # the search couldn't find the goal
     return None
 
 class WalkingProblem(Problem):
