@@ -236,7 +236,6 @@ class RegularCustomer(Customer):
         self._shop_environment.map[a[0]][a[1]].client_count - 1
         map = self._shop_environment.map
         path = depth_first_search(map, [a], b, {})
-        #path = [b]
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         self.update_current_section(b)
         return path

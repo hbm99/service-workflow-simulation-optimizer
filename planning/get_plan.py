@@ -310,17 +310,6 @@ def shopping_problem(client, enviroment):
     initial += f" & Sells({shopping_list[0].name}, {CONVERT_INT[str(section_index)]})"
 
 
-    #for section in sections:
-    
-        #initial += f" & Sells({section.product.name}, {CONVERT_INT[str(section.index_in_sections)]})"
-       # domain += f" & Section({CONVERT_INT[str(section.index_in_sections)]})"
-        #domain += f" & Place({CONVERT_INT[str(section.index_in_sections)]})"
-
-    #products = enviroment.products
-    #for product in products:
-        #domain += f" & Product({shopping_list[i].name})"
-
-
     return PlanningProblem(initial=initial,
                            goals=goal,
                            actions=[
@@ -336,5 +325,3 @@ def shopping_problem(client, enviroment):
                                            domain='Place(x) & Section(y)'),
                          ],
                            domain=domain)
-
-#get_solution(shopping_problem(4, e))

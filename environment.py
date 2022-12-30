@@ -55,7 +55,6 @@ class ShopEnvironment:
                     return
 
 
-
 class Cell:
     def __init__(self, position : tuple = (-1, -1)) -> None:
         self.client_count = 0

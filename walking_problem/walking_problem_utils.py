@@ -79,12 +79,12 @@ def depth_first_search(map, path: list, goal: str, visited: dict) -> list:
     current = path[-1]
     # if this is the goal, return the path
     if current == goal:
-        #print(path)
+        
         return path
     # visit this node
     visited[current] = True
     # generate a list of unvisited children and iterate over it
-    #print(current)
+    
     neighborhood = take_adj_list(map, current)
 
     unvisited = [child for child in neighborhood if child not in visited]

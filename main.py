@@ -7,10 +7,10 @@ from fuzzy_logic import set_up_fuzzy_tip
 def main():
     shop_size = 100
     num_cashiers = 20
-    list_product = [Product('Pizza', 10), Product('Pan', 5), Product('Tomate', 3), Product('Lechuga', 1), Product('Juguete', 20)]
+    list_product = [Product('Pizza', 10), Product('Pan', 5), Product('Tomate', 3), Product('Lechuga', 1), Product('Juguete', 20), Product('Cerveza', 3), Product('Chocolate', 2)]
     products = {item.name : item for item in list_product}
     simulation_time = 1000
-    shelves_distribution = [1, 0, 1, 2, 3, 4, 4, 0, 1, 2]
+    shelves_distribution = [1, 0, 1, 2, 3, 4, 5, 6, 1, 2]
     
     # Run the simulation
     env = simpy.Environment()
@@ -22,7 +22,7 @@ def main():
 
 if __name__ == "__main__":
     main()
-    print(f"Shop profits in the day: {profits_in_time[-1]}")
+    print(profits_in_time[-1])
 
 
 
