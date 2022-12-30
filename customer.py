@@ -155,7 +155,7 @@ class InAHurryCustomer(AStarGoCustomer):
     
     def take(self, product: Product):
         self._people_perceived_at_shop += self._current_section.client_count - 1 + int((2/10) * self._current_section.client_count)
-        if self._current_section.client_count > 20:  #hurry client => if there is too much people in section, doesn't buy article!!
+        if self._current_section.client_count > 40:  #hurry client => if there is too much people in section, doesn't buy article!!
             return
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         self._products_cart.append(product)
@@ -224,7 +224,7 @@ class RegularCustomer(Customer):
         return planification
 
     def take(self, product: Product):
-        self._people_perceived_at_shop += self._current_section.client_count -1
+        self._people_perceived_at_shop += self._current_section.client_count - 1
         yield self._shop_environment.env.timeout(random.randint(1, 3 + 1 * (self._current_section.client_count-1)))
 
         if product in self._shopping_list:
