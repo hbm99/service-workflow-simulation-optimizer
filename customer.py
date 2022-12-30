@@ -1,9 +1,15 @@
 from abc import ABC, abstractmethod
 import random
 from typing import List
+
+from sympy import false, true
+from environment import Product, ShopEnvironment, Section
+
+from planning.get_plan import get_planning, shopping_problem
+
 from environment import Product, ShopEnvironment
 from walking_problem.heuristic_problem_utils import astar_search, path_actions
-from walking_problem.walking_problem_utils import WalkingProblem
+from walking_problem.walking_problem_utils import WalkingProblem, depth_first_search
 
 
 class Customer(ABC):
@@ -18,6 +24,7 @@ class Customer(ABC):
         self._products_cart = []
         self._money = money
         self._buying_time = time
+        self._people_perceived_at_shop = 0
         
     
     def get_products_cart(self):
@@ -147,6 +154,7 @@ class InAHurryCustomer(AStarGoCustomer):
         
     
     def take(self, product: Product):
+        self._people_perceived_at_shop += self._current_section.client_count - 1 + int((2/10) * self._current_section.client_count)
         if self._current_section.client_count > 20:  #hurry client => if there is too much people in section, doesn't buy article!!
             return
         yield self._shop_environment.env.timeout(random.randint(1, 3))
@@ -191,6 +199,7 @@ class ConsumeristCustomer(AStarGoCustomer):
         
     def take(self, product: Product):
 
+        self._people_perceived_at_shop += self._current_section.client_count - 1 - int((1/10) * self._current_section.client_count)
         yield self._shop_environment.env.timeout(random.randint(1, 3 + 2 * (self._current_section.client_count-1)))
         if product in self._shopping_list:
             self._shopping_list.remove(product)
@@ -201,19 +210,35 @@ class ConsumeristCustomer(AStarGoCustomer):
         
 
 class RegularCustomer(Customer):
-    def __init__(self, id: int, arrival_time: int, shopping_list: List[Product], shop_environment: ShopEnvironment, start_position: tuple = (0, 0), money: int = 10 ** 10, time: int = 10 ** 10):
+    def __init__(self, id: int, arrival_time: int, shopping_list: List[Product], 
+                    shop_environment: ShopEnvironment, start_position: tuple = (0, 0), 
+                        money: int = 10 ** 10, time: int = 10 ** 10):
         super().__init__(id, arrival_time, shopping_list, shop_environment, start_position, money, time)
+        
+
+
     def get_plan(self):
-        # Insert your code here
-        pass
+        problem = shopping_problem(self, self._shop_environment)
+        planification = get_planning(problem)
+        planification.append("Buy()")
+        return planification
+
     def take(self, product: Product):
-        # Insert your code here
-        yield self._shop_environment.env.timeout(random.randint(1, 3))
-        # Insert your code here
+        self._people_at_shop += self._current_section.client_count -1
+        yield self._shop_environment.env.timeout(random.randint(1, 3 + 1 * (self._current_section.client_count-1)))
+        self._shopping_list.remove(product)
+        self._products_cart.append(product)
+
+
     def go(self, a: tuple, b: tuple):
-        # Insert your code here
+        self._shop_environment.map[a[0]][a[1]].client_count - 1
+        map = self._shop_environment.map
+        path = depth_first_search(map, a, b)
+
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         self.update_current_section(b)
-        # Insert your code here
+        return path
+
+
     def __str__(self) -> str:
         return str(self.id) + ': RegularCustomer'

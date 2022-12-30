@@ -40,8 +40,10 @@ def breadth_first_search(graph : list, root : tuple, destination : tuple, obstac
     
     return road_to_root(pi, destination, [])
 
+
 def is_obstacle(cell):
     return isinstance(cell, Section) or isinstance(cell, Cashier)
+
 
 
 def road_to_root(pi: dict, node, road: list):
@@ -52,6 +54,34 @@ def road_to_root(pi: dict, node, road: list):
 
 def is_inside(map, x, y):
     return x >= 0 and y >= 0 and x < len(map) and y < len(map[0])
+
+
+def take_adj_list(map, a):
+    adj = []
+    for dr in [-1, 0, 1]:
+        for dc in [-1, 0, 1]:
+            if dr == dc == 0:
+                continue
+            step = (a[0]+dr, a[1]+dc)
+            if is_inside(map, step[0], step[1]):
+                   adj.append(step)
+    return adj
+
+def depth_first_search(map, start, target, path = [], visited = set()):
+    path.append(start)
+    visited.add(start)
+    if start == target:
+        return path
+    neighborhood = take_adj_list(map, start)
+    for neighbour in  neighborhood:
+        if neighbour not in visited:
+            if is_obstacle(neighbour):
+                continue
+            result = depth_first_search(map, neighbour, target, path, visited)
+            if result is not None:
+                return result
+    path.pop()
+    return None
 
 class WalkingProblem(Problem):
     """Shop's walking problem."""
