@@ -1,10 +1,12 @@
 import itertools
 from lib2to3.pytree import convert
+from pydoc import resolve
 import numpy as np
 from planning.utils import *
 from planning.logic import *
 from planning.search import *
 from planning.planning import *
+from planning.utils import CONVERT_INT
 
 ###################################### Auxiliar methods ############################################ 
 class PlanningProblem:
@@ -257,15 +259,22 @@ class Action:
 
 
 
-######################################## Main method #####################################################3
-
-CONVERT_INT = {"0": "Zero", "1": "One", "2": "Two", "3": "Three", "4": "Four", "5":"Five"}
-
+######################################## Main method #####################################################
 def get_planning(problem):
-    solution = breadth_first_tree_search(ForwardPlan(problem)).solution()
-    solution = list(map(lambda action: Expr(action.name, *action.args), solution))
+    solution = resolve_planning(problem)
+    is_solution = True
+    for action in solution:
+        is_solution = "Take" in str(action)
+    while(not is_solution):
+        solution = resolve_planning(problem)
     final_sol = preprocess(solution)
-    return final_sol
+    return final_sol   
+
+def resolve_planning(problem):
+    solution =  depth_first_tree_search(ForwardPlan(problem)).solution()   
+    solution = list(map(lambda action: Expr(action.name, *action.args), solution))
+    print(solution)
+    return solution
 
 def preprocess(solution: list):
     final_sol = []

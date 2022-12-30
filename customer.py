@@ -112,10 +112,12 @@ class InAHurryCustomer(AStarGoCustomer):
         Gets a greedy plan depending on clients count in sections.
         """
         # get sections with shopping list products
+        aux_shopping_list: List[Product] = self._shopping_list.copy()
         sections_list = []
         for section in self._shop_environment.sections:
-            if section.product in self._shopping_list:
+            if section.product in aux_shopping_list:
                 sections_list.append(section)
+                aux_shopping_list.remove(section.product)
         
         # remove duplicated sections
         for i in range(len(sections_list)):
@@ -153,8 +155,7 @@ class InAHurryCustomer(AStarGoCustomer):
         
     
     def take(self, product: Product):
-        self._people_at_shop += self._current_section.client_count -1 + 2
-        if self._current_section.client_count > 15:  #hurry client => if there is too much people in section, doesn't buy article!!
+        if self._current_section.client_count > 20:  #hurry client => if there is too much people in section, doesn't buy article!!
             return
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         self._products_cart.append(product)
@@ -184,11 +185,11 @@ class ConsumeristCustomer(AStarGoCustomer):
 
             # Take action
             extra_product = random.random()
-            product_founded = prev_section.product in aux_shopping_list
+            product_founded = sec.product in aux_shopping_list
             if(extra_product > 0.6 or product_founded):
                 action= "Take("+ sec.product.name + ")"
-                if(product_founded): aux_shopping_list.remove(prev_section.product)
-            planning.append(action)
+                if(product_founded): aux_shopping_list.remove(sec.product)
+                planning.append(action)
 
         # Buy action
         action= "Buy()"
@@ -225,15 +226,18 @@ class RegularCustomer(Customer):
     def take(self, product: Product):
         self._people_at_shop += self._current_section.client_count -1
         yield self._shop_environment.env.timeout(random.randint(1, 3 + 1 * (self._current_section.client_count-1)))
-        self._shopping_list.remove(product)
-        self._products_cart.append(product)
+        [print(i.name) for i in self._shopping_list]
+        print(product.name)
+        if product in self._shopping_list:
+            self._shopping_list.remove(product)
+            self._products_cart.append(product)
 
 
     def go(self, a: tuple, b: tuple):
         self._shop_environment.map[a[0]][a[1]].client_count - 1
         map = self._shop_environment.map
-        path = depth_first_search(map, a, b)
-
+        #path = depth_first_search(map, a, b)
+        path = [b]
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         self.update_current_section(b)
         return path

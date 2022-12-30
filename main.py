@@ -4,14 +4,13 @@ from simulation import run_shop, profits_in_time
 from fuzzy_logic import set_up_fuzzy_tip
 
 
-
 def main():
-    shop_size = 8
-    num_cashiers = 1
-    list_product = [Product('Pizza', 10), Product('Pan', 5)]
+    shop_size = 100
+    num_cashiers = 20
+    list_product = [Product('Pizza', 10), Product('Pan', 5), Product('Tomate', 3), Product('Lechuga', 1), Product('Juguete', 20)]
     products = {item.name : item for item in list_product}
     simulation_time = 1000
-    shelves_distribution = [1, 0, 1]
+    shelves_distribution = [1, 0, 1, 2, 3, 4, 4, 0, 1, 2]
     
     # Run the simulation
     env = simpy.Environment()

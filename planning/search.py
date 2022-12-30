@@ -173,16 +173,17 @@ def breadth_first_tree_search(problem):
     """
 
     frontier = deque([Node(problem.initial)])  # FIFO queue
-    count = 0
+    iterations = 200
     while frontier:
-    
+        if iterations == 0:
+            break
         node = frontier.popleft()
         if problem.goal_test(node.state):
             return node
         frontier.extend(node.expand(problem))
-        count += 1
-        if count >= 5000: return node
-    return frontier
+        iterations -= 1
+        
+    return node
 
 
 
@@ -197,13 +198,18 @@ def depth_first_tree_search(problem):
     """
 
     frontier = [Node(problem.initial)]  # Stack
+    iterations = 200
 
     while frontier:
+        if iterations == 0:
+            break
         node = frontier.pop()
         if problem.goal_test(node.state):
             return node
         frontier.extend(node.expand(problem))
-    return None
+        iterations -= 1
+
+    return node
 
 
 def depth_first_graph_search(problem):
