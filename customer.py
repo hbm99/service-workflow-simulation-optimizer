@@ -10,7 +10,6 @@ from planning.get_plan import get_planning, shopping_problem
 from environment import Product, ShopEnvironment
 from walking_problem.heuristic_problem_utils import astar_search, path_actions
 from walking_problem.walking_problem_utils import WalkingProblem, depth_first_search
-import utils
 
 
 class Customer(ABC):
@@ -25,7 +24,7 @@ class Customer(ABC):
         self._products_cart = []
         self._money = money
         self._buying_time = time
-        self._people_at_shop = 0
+        self._people_perceived_at_shop = 0
         
     
     def get_products_cart(self):
@@ -155,6 +154,7 @@ class InAHurryCustomer(AStarGoCustomer):
         
     
     def take(self, product: Product):
+        self._people_perceived_at_shop += self._current_section.client_count - 1 + int((2/10) * self._current_section.client_count)
         if self._current_section.client_count > 20:  #hurry client => if there is too much people in section, doesn't buy article!!
             return
         yield self._shop_environment.env.timeout(random.randint(1, 3))
@@ -199,7 +199,7 @@ class ConsumeristCustomer(AStarGoCustomer):
         
     def take(self, product: Product):
 
-        self._people_at_shop += self._current_section.client_count -1 -1
+        self._people_perceived_at_shop += self._current_section.client_count - 1 - int((1/10) * self._current_section.client_count)
         yield self._shop_environment.env.timeout(random.randint(1, 3 + 2 * (self._current_section.client_count-1)))
         if product in self._shopping_list:
             self._shopping_list.remove(product)
