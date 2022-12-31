@@ -117,6 +117,9 @@ class InAHurryCustomer(AStarGoCustomer):
             if section.product in aux_shopping_list:
                 sections_list.append(section)
                 aux_shopping_list.remove(section.product)
+                
+        if len(sections_list) == 0:
+            return ["Go(0)", "Buy()"]
         
         if len(sections_list) == 0:
             return ["Go(0)", "Buy()"]
@@ -223,6 +226,8 @@ class RegularCustomer(Customer):
     def get_plan(self):
         problem = shopping_problem(self, self._shop_environment)
         planification = get_planning(problem)
+        if len(planification) == 0:
+            planification = ["Go(0)"]
         planification.append("Buy()")
         return planification
 
