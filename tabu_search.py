@@ -1,25 +1,29 @@
 import random as rd
 from itertools import combinations
-import math
+import simpy
+from fuzzy_logic import set_up_fuzzy_tip
+from simulation import run_shop, profits_in_time
 
 class TabuSearch():
-    def __init__(self, shelf_count, products, max_iter,  tabu_tenure = 2):
+    def __init__(self, shelf_count, products, shop_size, num_cashier, simulation_time, max_iter,  tabu_tenure = 2):
         
         #Tabu Tenure: This defines the size of the Tabu list, i.e., for how many 
         # iterations a solution component is kept as Tabu
+        self.max_iter= max_iter
         self.tabu_tenure = tabu_tenure
-
-
-
-        self.shelf_count= shelf_count
-
-        #self.shelves= {}
-        #for i in range(self.shelf_count):
-        #  self.shelves[i]= []
-
-        self.products= products
-
         self.Penalization_weight = 3
+        
+
+
+        # Simulation arguments
+        self.shelf_count= shelf_count
+        self.products= products
+        self.shop_size= shop_size
+        self.num_cashier= num_cashier
+        self.sim_time= simulation_time
+        self.products_dict = {item.name : item for item in self.products}
+
+        
 
         self.Initial_solution = self.get_InitialSolution()
 
@@ -42,7 +46,7 @@ class TabuSearch():
 
         # Filling shelves with random products
         for i in range(len(initial_solution)):
-            initial_solution[i]= rd.choice(self.products)
+            initial_solution[i]= self.products.index(rd.choice(self.products))
 
         #rd.seed(self.seed)
         #rd.shuffle(initial_solution)
@@ -55,7 +59,13 @@ class TabuSearch():
     def fitness(self,solution):
         ''' This method must initialize the simulation and run it to get the profits 
         with the current shelves organization. The return value must be -(profits)'''
-        return 0
+        # Run the simulation
+        env = simpy.Environment()
+        tipping = set_up_fuzzy_tip(len(solution))
+        env.process(run_shop(env, self.num_cashier, self.shop_size, self.products_dict, solution, tipping))
+        env.run(until=self.sim_time)
+        profits= profits_in_time[-1]
+        return -profits
 
     def Objfun(self, solution, show = False):
         '''Takes a set of scheduled jobs, dict (input data)

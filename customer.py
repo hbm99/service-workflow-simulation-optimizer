@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import random
 from typing import List
 
-from sympy import false, true
+
 from environment import Product, ShopEnvironment, Section
 
 from planning.get_plan import get_planning, shopping_problem
