@@ -26,7 +26,9 @@ class ShopEnvironment:
         
     
     def init_map(self, shop_size):
-        self.map = [[None] * shop_size] * shop_size
+        self.map = [None] * shop_size
+        for i in range(len(self.map)):
+            self.map[i] = [None] * shop_size
         for i in range(len(self.map)):
             for j in range(len(self.map[0])):
                 self.map[i][j] = Cell((i, j))
