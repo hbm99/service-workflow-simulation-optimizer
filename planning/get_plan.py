@@ -290,29 +290,32 @@ def shopping_problem(client, enviroment):
 
     initial = "At(Entry)"
     domain = "Place(Entry)"
-    goal = f'Have({shopping_list[0].name})'
     products.extend([section.product.name for section in sections])
+    real_list = []
     
-    for product in shopping_list:
-        if product.name not in products:
-            shopping_list.remove(product)
+    for p in shopping_list:
+        if p.name in products:
+            real_list.append(p)
+    
+    if len(real_list) > 0:
+        goal = f'Have({real_list[0].name})'
+        domain += f" & Product({real_list[0].name})"
+        section_index = products.index(real_list[0].name)
+        domain += f" & Section({CONVERT_INT[str(section_index)]})"
+        domain += f" & Place({CONVERT_INT[str(section_index)]})"
+        initial += f" & Sells({real_list[0].name}, {CONVERT_INT[str(section_index)]})"
+    else:
+        return None
 
-    for i in range(1, len(shopping_list)):
+    for i in range(1, len(real_list)):
         
-        goal += f" & Have({shopping_list[i].name})"
+        goal += f" & Have({real_list[i].name})"
         domain += f" & Product({shopping_list[i].name})"
-        section_index = products.index(shopping_list[i].name)
+        section_index = products.index(real_list[i].name)
         
         domain += f" & Section({CONVERT_INT[str(section_index)]})"
         domain += f" & Place({CONVERT_INT[str(section_index)]})"
-        initial += f" & Sells({shopping_list[i].name}, {CONVERT_INT[str(section_index)]})"
-
-    if(len(shopping_list) > 0):
-        domain += f" & Product({shopping_list[0].name})"
-        section_index = products.index(shopping_list[0].name)
-        domain += f" & Section({CONVERT_INT[str(section_index)]})"
-        domain += f" & Place({CONVERT_INT[str(section_index)]})"
-        initial += f" & Sells({shopping_list[0].name}, {CONVERT_INT[str(section_index)]})"
+        initial += f" & Sells({real_list[i].name}, {CONVERT_INT[str(section_index)]})"
 
 
     return PlanningProblem(initial=initial,
