@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import random
 from typing import List
 
-from sympy import false, true
+
 from environment import Product, ShopEnvironment, Section
 
 from planning.get_plan import get_planning, shopping_problem
@@ -121,6 +121,9 @@ class InAHurryCustomer(AStarGoCustomer):
         if len(sections_list) == 0:
             return ["Go(0)", "Buy()"]
         
+        if len(sections_list) == 0:
+            return ["Go(0)", "Buy()"]
+            
         # remove duplicated sections
         for i in range(len(sections_list)):
             for j in range(len(sections_list)):
