@@ -38,6 +38,22 @@ cb.set_ticklabels([v for k, v in sorted((v,k) for k,v in d.items())])
 
 def pretty_printing(map: List[List[Cell]]):
     new_map = convert_to_np_array(map)
+    
+    #new_map = new_map.reshape(a.shape)
+    
+    N = len(CONVERSION_DICT)
+    # to avoid a continuous colorbar, we sample the needed colors
+    cmap = plt.cm.get_cmap('viridis', N) 
+
+    # eventually,
+    # we can plot the matrix, the colorbar and fix the colorbar labelling
+    plt.imshow(new_map, cmap=cmap)
+    cb = plt.colorbar(drawedges=True)
+    dc = (N-1)/N
+    cb.set_ticks([dc*(n+1/2) for n in range(N)])
+    cb.set_ticklabels([v for k, v in sorted((v,k) for k,v in CONVERSION_DICT.items())])
+
+    plt.show()
 
 def convert_to_np_array(map: List[List[Cell]]):
     new_map = [None] * len(map)
