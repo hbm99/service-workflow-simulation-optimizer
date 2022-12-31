@@ -65,26 +65,8 @@ class TabuSearch():
         env.process(run_shop(env, self.num_cashier, self.shop_size, self.products_dict, solution, tipping))
         env.run(until=self.sim_time)
         profits= profits_in_time[-1]
+        print(f"Got ${str(profits)} at {solution}")
         return -profits
-
-    def Objfun(self, solution, show = False):
-        '''Takes a set of scheduled jobs, dict (input data)
-        Return the objective function value of the solution
-        '''
-        dict = self.instance_dict
-        t = 0   #starting time
-        objfun_value = 0
-        for job in solution:
-            C_i = t + dict[job]["processing_time"]  # Completion time
-            d_i = dict[job]["due_date"]   # due date of the job
-            T_i = max(0, C_i - d_i)    #tardiness for the job
-            W_i = dict[job]["weight"]  # job's weight
-
-            objfun_value +=  W_i * T_i
-            t = C_i
-        if show == True:
-            print("\n","#"*8, "The Objective function value for {} solution schedule is: {}".format(solution ,objfun_value),"#"*8)
-        return objfun_value
 
     def SwapMove(self, solution, i ,j):
         '''Takes a list (solution)
@@ -94,6 +76,17 @@ class TabuSearch():
         #Swap
         solution[i], solution[j] = solution[j], solution[i]
         return solution
+
+    def MutationMove(self,solution):
+        new_sol= solution.copy()
+        products_indices= [i for i in range(len(self.products))]
+        not_allocated_prod = list(set(products_indices) - set(solution))
+        section_to_mutate= rd.randint(0, len(solution)-1)
+        new_product= rd.choice(not_allocated_prod)
+        new_sol[section_to_mutate]= new_product
+        return solution
+
+
 
     def TSearch(self, max_iter):
         '''The implementation Tabu search algorithm with long-term memory and pair_swap as Tabu attribute with
@@ -123,6 +116,8 @@ class TabuSearch():
             # Searching the whole neighborhood of the current solution:
             for move in tabu_structure.keys():
                 candidate_solution = self.SwapMove(current_solution, move[0], move[1])
+                mutation= rd.random()
+                #if(mutation>0.75): candidate_solution = self.MutationMove(current_solution)
                 candidate_objvalue = self.fitness(candidate_solution)
                 tabu_structure[move]['MoveValue'] = candidate_objvalue
                 # Penalized objValue by simply adding freq to Objvalue (minimization):
@@ -169,7 +164,7 @@ class TabuSearch():
                         best_solution = current_solution
                         best_objvalue = current_objvalue
                         print("   best_move: {}, Objvalue: {} => Aspiration => Admissible".format(best_move,
-                                                                                                      current_objvalue))
+                                                                                                      -current_objvalue))
                         tabu_structure[best_move]['freq'] += 1
                         Terminate = 0
                         iter += 1
@@ -177,9 +172,9 @@ class TabuSearch():
                     else:
                         tabu_structure[best_move]['Penalized_MV'] = float('inf')
                         print("   best_move: {}, Objvalue: {} => Tabu => Inadmissible".format(best_move,
-                                                                                              current_objvalue))
+                                                                                              -current_objvalue))
                         continue
-        print('#'*50 , "Performed iterations: {}".format(iter), "Best found Solution: {} , Objvalue: {}".format(best_solution,best_objvalue), sep="\n")
-        return tabu_structure, best_solution, best_objvalue
+        print('#'*50 , "Performed iterations: {}".format(iter), "Best found Solution: {} , Objvalue: {}".format(best_solution,-best_objvalue), sep="\n")
+        return tabu_structure, best_solution, -best_objvalue
 
 
