@@ -5,10 +5,18 @@ from environment import Product, ShopEnvironment
 import re
 from customer_actions import ACTIONS
 
+
+tips_in_time = []
+peolple_at_section = []
 profits_in_time = []
+
 CUSTOMER_TYPES = [ConsumeristCustomer, InAHurryCustomer, RegularCustomer] # pending add regular customer
 
-def run_shop(env, num_cashiers, shop_size, products, shelves_distribution, tipping):
+def run_shop(env, num_cashiers, shop_size, products, shelves_distribution, tipping, customer_types):
+    
+    if customer_types:
+        CUSTOMER_TYPES = customer_types
+
     shop = ShopEnvironment(env, shop_size, products, shelves_distribution, num_cashiers)
     
     for id in range(3):
@@ -21,6 +29,10 @@ def run_shop(env, num_cashiers, shop_size, products, shelves_distribution, tippi
         id+=1
         customer = generate_customer(id, env, shop)
         env.process(go_shopping(env, customer, shop, tipping))
+
+        peolple_at_section.append([section.client_count for section in shop.sections])
+
+    
 
 def go_shopping(env, customer, shop, tipping):
     
@@ -42,7 +54,8 @@ def go_shopping(env, customer, shop, tipping):
 
                 tip_percent = tipping.output['tip']
                 tip = round(tip_percent * (spended/100), 2)
-
+                
+                tips_in_time.append(tip)
                 profits_in_time[-1] += tip
 
                 print(f"{str(customer)} spended ${spended} and left a tip of ${tip}")  
