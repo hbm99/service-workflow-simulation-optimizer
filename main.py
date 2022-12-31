@@ -26,11 +26,10 @@ def main(size, cashiers, time, customers):
 
 if __name__ == "__main__":
 
-    customer_types = [ConsumeristCustomer, InAHurryCustomer, RegularCustomer] # pending add regular customer
     size = 100
     cashiers = 20
     time = 30
-    main(size, cashiers, time, customer_types)
+    main(size, cashiers, time, [])
    #print(profits_in_time[-1])
    # [print(j) for j in [i for i in peolple_at_section]]
 
