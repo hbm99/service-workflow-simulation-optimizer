@@ -293,21 +293,26 @@ def shopping_problem(client, enviroment):
     goal = f'Have({shopping_list[0].name})'
     products.extend([section.product.name for section in sections])
     
+    for product in shopping_list:
+        if product.name not in products:
+            shopping_list.remove(product)
 
     for i in range(1, len(shopping_list)):
         
         goal += f" & Have({shopping_list[i].name})"
         domain += f" & Product({shopping_list[i].name})"
         section_index = products.index(shopping_list[i].name)
+        
         domain += f" & Section({CONVERT_INT[str(section_index)]})"
         domain += f" & Place({CONVERT_INT[str(section_index)]})"
         initial += f" & Sells({shopping_list[i].name}, {CONVERT_INT[str(section_index)]})"
 
-    domain += f" & Product({shopping_list[0].name})"
-    section_index = products.index(shopping_list[0].name)
-    domain += f" & Section({CONVERT_INT[str(section_index)]})"
-    domain += f" & Place({CONVERT_INT[str(section_index)]})"
-    initial += f" & Sells({shopping_list[0].name}, {CONVERT_INT[str(section_index)]})"
+    if(len(shopping_list) > 0):
+        domain += f" & Product({shopping_list[0].name})"
+        section_index = products.index(shopping_list[0].name)
+        domain += f" & Section({CONVERT_INT[str(section_index)]})"
+        domain += f" & Place({CONVERT_INT[str(section_index)]})"
+        initial += f" & Sells({shopping_list[0].name}, {CONVERT_INT[str(section_index)]})"
 
 
     return PlanningProblem(initial=initial,

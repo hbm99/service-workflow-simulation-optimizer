@@ -6,7 +6,7 @@ import re
 from customer_actions import ACTIONS
 
 profits_in_time = []
-CUSTOMER_TYPES = [ConsumeristCustomer, InAHurryCustomer]#, RegularCustomer]
+CUSTOMER_TYPES = [ConsumeristCustomer, InAHurryCustomer, RegularCustomer]
 
 def run_shop(env, num_cashiers, shop_size, products, shelves_distribution, tipping):
     shop = ShopEnvironment(env, shop_size, products, shelves_distribution, num_cashiers)
