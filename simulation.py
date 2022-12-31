@@ -14,7 +14,7 @@ CUSTOMER_TYPES = [ConsumeristCustomer, InAHurryCustomer, RegularCustomer] # pend
 
 def run_shop(env, num_cashiers, shop_size, products, shelves_distribution, tipping, customer_types):
     
-    if customer_types:
+    if len(customer_types) > 0:
         CUSTOMER_TYPES = customer_types
 
     shop = ShopEnvironment(env, shop_size, products, shelves_distribution, num_cashiers)
