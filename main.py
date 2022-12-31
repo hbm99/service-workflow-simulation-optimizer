@@ -9,8 +9,8 @@ def main():
     num_cashiers = 20
     list_product = [Product('Pizza', 10), Product('Pan', 5), Product('Tomate', 3), Product('Lechuga', 1), Product('Juguete', 20), Product('Cerveza', 3), Product('Chocolate', 2)]
     products = {item.name : item for item in list_product}
-    simulation_time = 60 * 60
-    shelves_distribution = [1, 0, 1, 2, 3, 4, 5, 6, 1, 2]
+    simulation_time = 60 * 600
+    shelves_distribution = [0, 0, 3, 4, 2, 6, 4, 4, 1, 0]  # [1, 0, 1, 2, 3, 4, 5, 6, 1, 2]
     
     # Run the simulation
     env = simpy.Environment()

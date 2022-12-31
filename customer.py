@@ -117,6 +117,9 @@ class InAHurryCustomer(AStarGoCustomer):
             if section.product in aux_shopping_list:
                 sections_list.append(section)
                 aux_shopping_list.remove(section.product)
+                
+        if len(sections_list) == 0:
+            return ["Go(0)", "Buy()"]
         
         # remove duplicated sections
         for i in range(len(sections_list)):
