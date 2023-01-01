@@ -225,10 +225,11 @@ class RegularCustomer(Customer):
 
     def get_plan(self):
         problem = shopping_problem(self, self._shop_environment)
-        planification = get_planning(problem)
-        if len(planification) == 0:
-            planification = ["Go(0)"]
-        planification.append("Buy()")
+        if problem == None:
+            return ["Go(0)", "Buy()"]
+        else:
+            planification = get_planning(problem)
+            planification.append("Buy()")
         return planification
 
     def take(self, product: Product):
