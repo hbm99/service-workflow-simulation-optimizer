@@ -1,0 +1,6 @@
+streamlit
+simpy
+skfuzzy
+numpy
+math
+collections
