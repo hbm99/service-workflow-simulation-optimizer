@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from customer import Customer
 from environment import Cell, ShopEnvironment
 
