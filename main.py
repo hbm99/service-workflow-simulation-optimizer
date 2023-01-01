@@ -1,7 +1,4 @@
-import simpy
 from environment import Product
-from simulation import run_shop, profits_in_time
-from fuzzy_logic import set_up_fuzzy_tip
 from tabu_search import TabuSearch
 
 

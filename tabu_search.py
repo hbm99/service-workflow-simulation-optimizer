@@ -1,8 +1,11 @@
 import random as rd
 from itertools import combinations
+
 from simpy import rt
+
 from fuzzy_logic import set_up_fuzzy_tip
-from simulation import run_shop, profits_in_time
+from simulation import profits_in_time, run_shop
+
 
 class TabuSearch():
     def __init__(self, shelf_count, products, shop_size, num_cashier, simulation_time, max_iter,  tabu_tenure = 2):
@@ -61,6 +64,7 @@ class TabuSearch():
         with the current shelves organization. The return value must be -(profits)'''
         
         # Run the simulation
+        print(f"Starting simulation. Distribution: {solution}")
         env = rt.RealtimeEnvironment(factor=0.001, strict=False)
         tipping = set_up_fuzzy_tip(len(solution))
         env.process(run_shop(env, self.num_cashier, self.shop_size, self.products_dict, solution, tipping))

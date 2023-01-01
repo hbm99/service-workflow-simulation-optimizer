@@ -1,15 +1,12 @@
-from abc import ABC, abstractmethod
 import random
+from abc import ABC, abstractmethod
 from typing import List
 
-
-from environment import Product, ShopEnvironment, Section
-
+from environment import Product, Section, ShopEnvironment
 from planning.get_plan import get_planning, shopping_problem
-
-from environment import Product, ShopEnvironment
 from walking_problem.heuristic_problem_utils import astar_search, path_actions
-from walking_problem.walking_problem_utils import WalkingProblem, depth_first_search
+from walking_problem.walking_problem_utils import (WalkingProblem,
+                                                   depth_first_search)
 
 
 class Customer(ABC):
