@@ -6,7 +6,7 @@ import re
 from customer_actions import ACTIONS
 
 profits_in_time = []
-CUSTOMER_TYPES = [RegularCustomer, RegularCustomer, RegularCustomer]
+CUSTOMER_TYPES = [ConsumeristCustomer, InAHurryCustomer, RegularCustomer]
 
 def run_shop(env, num_cashiers, shop_size, products, shelves_distribution, tipping):
     shop = ShopEnvironment(env, shop_size, products, shelves_distribution, num_cashiers)
@@ -34,6 +34,7 @@ def go_shopping(env, customer, shop, tipping):
             with shop.cashier.request() as request:
                 yield request
                 yield env.process(ACTIONS[tokens[0]](shop, customer, tokens[1:]).execute())
+                
                 profits_in_time.append(shop.profit)
                 
                 spended = sum([product.price for product in customer._products_cart])
@@ -43,12 +44,14 @@ def go_shopping(env, customer, shop, tipping):
                 tipping.compute()
 
                 tip_percent = tipping.output['tip']
-                tip = round(tip_percent * (spended/100), 2)
+                tip = int(round(tip_percent * (spended/100), 2))
 
                 profits_in_time[-1] += tip
-
-                #print(f"{str(customer)} spent ${spended} and left a tip of ${tip}")  
-                #print(f"Total shop profits: {profits_in_time[-1]}")
+                
+                shop.profit += tip
+                
+                print(f"{str(customer)} spent ${spended} and left a tip of ${tip}")  
+                print(f"Total profit: {profits_in_time[-1]}")
 
         else : yield env.process(ACTIONS[tokens[0]](shop, customer, tokens[1:]).execute())
         
