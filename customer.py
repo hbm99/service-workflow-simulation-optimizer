@@ -1,15 +1,12 @@
-from abc import ABC, abstractmethod
 import random
+from abc import ABC, abstractmethod
 from typing import List
 
-from sympy import false, true
-from environment import Product, ShopEnvironment, Section
-
+from environment import Product, Section, ShopEnvironment
 from planning.get_plan import get_planning, shopping_problem
-
-from environment import Product, ShopEnvironment
 from walking_problem.heuristic_problem_utils import astar_search, path_actions
-from walking_problem.walking_problem_utils import WalkingProblem, depth_first_search
+from walking_problem.walking_problem_utils import (WalkingProblem,
+                                                   depth_first_search)
 
 
 class Customer(ABC):
@@ -121,6 +118,9 @@ class InAHurryCustomer(AStarGoCustomer):
         if len(sections_list) == 0:
             return ["Go(0)", "Buy()"]
         
+        if len(sections_list) == 0:
+            return ["Go(0)", "Buy()"]
+            
         # remove duplicated sections
         for i in range(len(sections_list)):
             for j in range(len(sections_list)):
@@ -158,7 +158,7 @@ class InAHurryCustomer(AStarGoCustomer):
     
     def take(self, product: Product):
         self._people_perceived_at_shop += self._current_section.client_count - 1 + int((2/10) * self._current_section.client_count)
-        if self._current_section.client_count > 40:  #hurry client => if there is too much people in section, doesn't buy article!!
+        if self._current_section.client_count > 5:  #hurry client => if there is too much people in section, doesn't buy article!!
             return
         yield self._shop_environment.env.timeout(random.randint(1, 3))
         self._products_cart.append(product)
@@ -222,11 +222,11 @@ class RegularCustomer(Customer):
 
     def get_plan(self):
         problem = shopping_problem(self, self._shop_environment)
-        planification = get_planning(problem)
-        print(planification)
-        if len(planification) == 0:
-            planification = ["Go(0)"]
-        planification.append("Buy()")
+        if problem == None:
+            return ["Go(0)", "Buy()"]
+        else:
+            planification = get_planning(problem)
+            planification.append("Buy()")
         return planification
 
     def take(self, product: Product):

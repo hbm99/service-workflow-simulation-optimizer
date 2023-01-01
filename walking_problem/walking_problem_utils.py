@@ -1,6 +1,7 @@
 import collections
 import math
-from environment import Section, Cashier
+
+from environment import Cashier, Section
 from walking_problem.heuristic_problem_utils import Problem
 
 DIR_ROW = [0, 1, 0, -1, 1, -1, -1, 1]

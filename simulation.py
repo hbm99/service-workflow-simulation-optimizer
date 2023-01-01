@@ -1,9 +1,10 @@
 import random
-from typing import List
-from customer import ConsumeristCustomer, InAHurryCustomer, RegularCustomer
-from environment import Product, ShopEnvironment
 import re
+from typing import List
+
+from customer import ConsumeristCustomer, InAHurryCustomer, RegularCustomer
 from customer_actions import ACTIONS
+from environment import Product, ShopEnvironment
 
 
 tips_in_time = []
@@ -12,10 +13,7 @@ profits_in_time = []
 
 CUSTOMER_TYPES = [ConsumeristCustomer, InAHurryCustomer, RegularCustomer] # pending add regular customer
 
-def run_shop(env, num_cashiers, shop_size, products, shelves_distribution, tipping, customer_types):
-    
-    if len(customer_types) > 0:
-        CUSTOMER_TYPES = customer_types
+def run_shop(env, num_cashiers, shop_size, products, shelves_distribution, tipping):
 
     shop = ShopEnvironment(env, shop_size, products, shelves_distribution, num_cashiers)
     
@@ -46,6 +44,7 @@ def go_shopping(env, customer, shop, tipping):
             with shop.cashier.request() as request:
                 yield request
                 yield env.process(ACTIONS[tokens[0]](shop, customer, tokens[1:]).execute())
+                
                 profits_in_time.append(shop.profit)
                 
                 spended = sum([product.price for product in customer._products_cart])
@@ -55,13 +54,17 @@ def go_shopping(env, customer, shop, tipping):
                 tipping.compute()
 
                 tip_percent = tipping.output['tip']
-                tip = round(tip_percent * (spended/100), 2)
+                tip = int(round(tip_percent * (spended/100), 2))
                 
                 tips_in_time.append(tip)
-                profits_in_time[-1] += tip
 
-                print(f"{str(customer)} spent ${spended} and left a tip of ${tip}")  
-                print(f"Total shop profits: {profits_in_time[-1]}")
+                profits_in_time[-1] += tip
+                
+                shop.profit += tip
+                
+                print(f"    {str(customer)} spent ${spended} and left a tip of ${tip}")  
+                print(f"    Total profit: ${profits_in_time[-1]}")
+                
 
         else : yield env.process(ACTIONS[tokens[0]](shop, customer, tokens[1:]).execute())
         

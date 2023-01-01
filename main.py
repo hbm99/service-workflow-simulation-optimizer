@@ -1,37 +1,33 @@
-import simpy
+from tabu_search import TabuSearch
 from environment import Product
-from simulation import run_shop, profits_in_time, peolple_at_section, tips_in_time
-from fuzzy_logic import set_up_fuzzy_tip
-from customer import ConsumeristCustomer, InAHurryCustomer, RegularCustomer
 
-
-def main(size, cashiers, time, customers):
+def main(size, cashiers, time, shelves, iterations, sim_n):
+    # Shop parameters
     shop_size = size
     num_cashiers = cashiers
-    customer_types = customers
-    list_product = [Product('Pizza', 10), Product('Pan', 5), Product('Tomate', 3), Product('Jugo', 7), Product('Chocolate', 9), Product('Cerveza', 1), Product('Agua', 2)]
-    products = {item.name : item for item in list_product}
+    list_product = [Product('PIZZA', 10), Product('PAN', 5), Product('TOMATE', 3), Product('LECHUGA', 1), Product('JUGUETE', 20), Product('CERVEZA', 3), Product('CHOCOLATE', 2)]
     simulation_time = time
-    shelves_distribution = [0, 0, 3, 4, 2, 6, 4, 4, 1, 0]
+    shelves_count= shelves
     
-    # Run the simulation
-    env = simpy.Environment()
-    tipping = set_up_fuzzy_tip(len(shelves_distribution))
-    env.process(run_shop(env, num_cashiers, shop_size, products, shelves_distribution, tipping, customer_types))
-    env.run(until=simulation_time)
+    #Optimization parameters
+    opt_max_iter= iterations
 
-    return profits_in_time, peolple_at_section, tips_in_time
+    # Simulation results parameters
+    sim_numb= sim_n
+    results= []
+    solutions_fit = []
 
+    for _ in range(sim_numb):
+        ts= TabuSearch(shelves_count, list_product,shop_size, num_cashiers, simulation_time, opt_max_iter)
+        results.append((ts.Best_solution, ts.Best_objvalue))
+        solutions_fit.append(ts.solutions_fit)
+    
+    print (results)
+    return results, solutions_fit
 
 
 if __name__ == "__main__":
-
-    size = 100
-    cashiers = 20
-    time = 30
-    main(size, cashiers, time, [])
-   #print(profits_in_time[-1])
-   # [print(j) for j in [i for i in peolple_at_section]]
+    main(10, 2, 60 * 60, 4, 6, 1)
 
 
 
