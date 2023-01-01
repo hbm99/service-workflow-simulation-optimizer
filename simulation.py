@@ -50,8 +50,6 @@ def go_shopping(env, customer, shop, tipping):
                 
                 shop.profit += tip
                 
-                print(f"{str(customer)} spent ${spended} and left a tip of ${tip}")  
-                print(f"Total profit: {profits_in_time[-1]}")
 
         else : yield env.process(ACTIONS[tokens[0]](shop, customer, tokens[1:]).execute())
         

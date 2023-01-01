@@ -1,6 +1,6 @@
 import random as rd
 from itertools import combinations
-import simpy
+from simpy import rt
 from fuzzy_logic import set_up_fuzzy_tip
 from simulation import run_shop, profits_in_time
 
@@ -59,8 +59,9 @@ class TabuSearch():
     def fitness(self,solution):
         ''' This method must initialize the simulation and run it to get the profits 
         with the current shelves organization. The return value must be -(profits)'''
+        
         # Run the simulation
-        env = simpy.Environment()
+        env = rt.RealtimeEnvironment(factor=0.001, strict=False)
         tipping = set_up_fuzzy_tip(len(solution))
         env.process(run_shop(env, self.num_cashier, self.shop_size, self.products_dict, solution, tipping))
         env.run(until=self.sim_time)
@@ -102,7 +103,7 @@ class TabuSearch():
         current_solution = self.Initial_solution
         current_objvalue = best_objvalue
 
-        print("#"*30, "Short-term memory TS with Tabu Tenure: {}\nInitial Solution: {}, Initial Objvalue: {}".format(
+        print("#"*30, "TS with Tabu Tenure: {}\nInitial Solution: {}, Initial Objvalue: {}".format(
             tenure, current_solution, -current_objvalue), "#"*30, sep='\n\n')
 
         iter = 1

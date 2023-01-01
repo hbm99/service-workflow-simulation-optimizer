@@ -22,7 +22,7 @@ def main():
 
     for _ in range(sim_numb):
         ts= TabuSearch(shelves_count, list_product,shop_size, num_cashiers, simulation_time, opt_max_iter)
-        results.append(ts.Best_solution, ts.Best_objvalue)
+        results.append((ts.Best_solution, ts.Best_objvalue))
     
     print (results)
 
