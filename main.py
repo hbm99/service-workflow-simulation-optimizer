@@ -6,14 +6,25 @@ from tabu_search import TabuSearch
 
 
 def main():
-    shop_size = 100
-    num_cashiers = 20
+    # Shop parameters
+    shop_size = 10
+    num_cashiers = 2
     list_product = [Product('PIZZA', 10), Product('PAN', 5), Product('TOMATE', 3), Product('LECHUGA', 1), Product('JUGUETE', 20), Product('CERVEZA', 3), Product('CHOCOLATE', 2)]
-    products = {item.name : item for item in list_product}
     simulation_time = 60 * 60
     shelves_count= 4
+    
+    #Optimization parameters
+    opt_max_iter= 6
 
-    ts= TabuSearch(shelves_count, list_product,shop_size, num_cashiers, simulation_time, 5)
+    # Simulation results parameters
+    sim_numb= 1
+    results= []
+
+    for _ in range(sim_numb):
+        ts= TabuSearch(shelves_count, list_product,shop_size, num_cashiers, simulation_time, opt_max_iter)
+        results.append(ts.Best_solution, ts.Best_objvalue)
+    
+    print (results)
 
 
 if __name__ == "__main__":

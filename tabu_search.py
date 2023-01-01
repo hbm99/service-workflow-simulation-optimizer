@@ -103,20 +103,20 @@ class TabuSearch():
         current_objvalue = best_objvalue
 
         print("#"*30, "Short-term memory TS with Tabu Tenure: {}\nInitial Solution: {}, Initial Objvalue: {}".format(
-            tenure, current_solution, current_objvalue), "#"*30, sep='\n\n')
+            tenure, current_solution, -current_objvalue), "#"*30, sep='\n\n')
 
         iter = 1
         Terminate = 0
     
         while iter < max_iter: #Terminate < max_iter:
 
-            print('\n\n### iter {}###  Current_Objvalue: {}, Best_Objvalue: {}'.format(iter, current_objvalue,
-                                                                                    best_objvalue))
+            print('\n\n### iter {}###  Current_Objvalue: {}, Best_Objvalue: {}'.format(iter, -current_objvalue,
+                                                                                    -best_objvalue))
             
             # Searching the whole neighborhood of the current solution:
             for move in tabu_structure.keys():
                 candidate_solution = self.SwapMove(current_solution, move[0], move[1])
-                mutation= rd.random()
+                #mutation= rd.random()
                 #if(mutation>0.75): candidate_solution = self.MutationMove(current_solution)
                 candidate_objvalue = self.fitness(candidate_solution)
                 tabu_structure[move]['MoveValue'] = candidate_objvalue
@@ -141,12 +141,12 @@ class TabuSearch():
                         best_solution = current_solution
                         best_objvalue = current_objvalue
                         print("   best_move: {}, Objvalue: {} => Best Improving => Admissible".format(best_move,
-                                                                                                      current_objvalue))
+                                                                                                      -current_objvalue))
                         Terminate = 0
                     else:
                         print("   ##Termination: {}## best_move: {}, Objvalue: {} => Least non-improving => "
                               "Admissible".format(Terminate,best_move,
-                                                                                                           current_objvalue))
+                                                                                                          - current_objvalue))
                         Terminate += 1
                     # update tabu_time for the move and freq count
                     tabu_structure[best_move]['tabu_time'] = iter + tenure
