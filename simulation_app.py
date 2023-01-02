@@ -12,8 +12,6 @@ from main import main
 st.markdown("######")
 st.title("Shop's simulation optimization")
 
-peolple_at_section = [[0]]
-tips_in_time = [0]
 
 st.sidebar.header("Enter parameters value")
 
@@ -35,27 +33,24 @@ sim_num = st.sidebar.number_input("Simulations number", min_value=1, step=1, hel
 solutions_fit = []
 results = ""
 
-if st.button("Start shop's simulation optimization"):
+if st.button("Start"):
     results, solutions_fit = main(shop_size, num_cashiers, time, shelves_count, iterations, sim_num)
 
     for i in range(len(solutions_fit)):
         distribution = solutions_fit[i].keys()
         profits = solutions_fit[i].values()
     
-    #reg_result = re.compile('[\S]')
 
-    #results = reg_result.search(str(results)
+        st.markdown(f'Best solution found: **{results[0][0]}**')
+        st.markdown(f'Value: **{results[0][1]}**')
 
-    st.markdown(f'Best solution found: **{results[0][0]}**')
-    st.markdown(f'Value: **{results[0][1]}**')
-
-    st.write("Profits for a shelves distributuin")
+        st.write("Profits for a shelves distribution")
     
-    profits = pd.DataFrame({
-    'Shelves distribution': distribution,
-    'Profits': profits
-    })
+        profits = pd.DataFrame({
+        'Shelves distribution': distribution,
+        'Profits': profits
+        })
 
-    profits = profits.set_index('Shelves distribution')
+        profits = profits.set_index('Shelves distribution')
 
-    st.line_chart(profits)
+        st.line_chart(profits)
