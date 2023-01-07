@@ -2,7 +2,7 @@
 
 Run `main.py` to run simulation optimizer.
 
-### Integrantes:
+### Members:
 
 Hansel Blanco Martí---C311
 
